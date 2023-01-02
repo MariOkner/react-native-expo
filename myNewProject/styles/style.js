@@ -7,8 +7,8 @@ export const globalStyle = StyleSheet.create({
     backgroundColor: "#000",
   },
   title: {
-    fontSize: 20,
-    color: "#252525",
+    fontSize: 30,
+    color: "#000",
     fontFamily: "andika-b",
   },
 });

@@ -1,20 +1,19 @@
-{
-  /* <script src="http://localhost:19000"></script>; */
-}
 import React, { useCallback, useEffect, useState } from "react";
-// import { globalStyle } from "./styles/style";
 
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
-import { View } from "react-native";
 
-import LoginScreen from "./screens/LoginScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import { useRoute } from "./router";
+
+import { View } from "react-native";
+import { globalStyle } from "./styles/style";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-
+  const routing = useRoute({});
   // Fonts
   useEffect(() => {
     async function prepare() {
@@ -45,11 +44,10 @@ export default function App() {
 
   //__________________________________________________________________________
   return (
-    <View
-      onLayout={onLayoutRootView}
-      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-    >
-      <LoginScreen />
-    </View>
+    <NavigationContainer>
+      <View onLayout={onLayoutRootView} style={globalStyle.container}>
+        {routing}
+      </View>
+    </NavigationContainer>
   );
 }

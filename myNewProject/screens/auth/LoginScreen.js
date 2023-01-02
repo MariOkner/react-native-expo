@@ -1,8 +1,5 @@
-{
-  /* <script src="http://localhost:19000"></script>; */
-}
 import React, { useEffect, useState } from "react";
-import { globalStyle } from "../styles/style";
+import { globalStyle } from "../../styles/style";
 
 import {
   StyleSheet,
@@ -19,12 +16,13 @@ import {
 } from "react-native";
 
 const initialState = {
+  login: "",
   email: "",
   password: "",
 };
 
-export default function LoginScreen() {
-  // console.log(Platform.OS);
+export default function LoginScreen({ navigation }) {
+  // console.log("navigation ", navigation);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   // const [appIsReady, setAppIsReady] = useState(false);
@@ -55,7 +53,7 @@ export default function LoginScreen() {
       <View style={globalStyle.container}>
         <ImageBackground
           style={styles.image}
-          source={require("../assets/images/background1.jpg")}
+          source={require("../../assets/images/background1.jpg")}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : ""}
@@ -68,10 +66,10 @@ export default function LoginScreen() {
               }}
             >
               <View style={styles.header}>
-                <Text style={globalStyle.title}>Регистрация</Text>
+                <Text style={globalStyle.title}>Увійти</Text>
               </View>
-              <View>
-                <Text style={styles.inputTitle}>Email</Text>
+              <View style={{ marginTop: 20 }}>
+                {/* <Text style={styles.inputTitle}>Email</Text> */}
                 <TextInput
                   style={styles.input}
                   onFocus={() => setIsShowKeyboard(true)}
@@ -79,10 +77,11 @@ export default function LoginScreen() {
                   onChangeText={(value) =>
                     setState((prevState) => ({ ...prevState, email: value }))
                   }
+                  placeholder="Адреса електронної пошти"
                 />
               </View>
               <View style={{ marginTop: 20 }}>
-                <Text style={styles.inputTitle}>Password</Text>
+                {/* <Text style={styles.inputTitle}>Password</Text> */}
                 <TextInput
                   style={styles.input}
                   secureTextEntry={true}
@@ -91,6 +90,7 @@ export default function LoginScreen() {
                   onChangeText={(value) =>
                     setState((prevState) => ({ ...prevState, password: value }))
                   }
+                  placeholder="Пароль"
                 />
               </View>
               <TouchableOpacity
@@ -98,11 +98,18 @@ export default function LoginScreen() {
                 style={styles.button}
                 onPress={keyboardHide}
               >
-                <Text style={styles.btnTitle}>SIGN IN</Text>
+                <Text style={styles.btnTitle}>Увійти</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.navText}
+                onPress={() => navigation.navigate("Register")}
+              >
+                <Text style={styles.activeText}>
+                  Нема акаунта?{"  "}
+                  <Text style={styles.staticText}>Зареєструватися</Text>
+                </Text>
               </TouchableOpacity>
             </View>
-
-            {/* <Text style={styles.text}>Hello, friend!</Text> */}
           </KeyboardAvoidingView>
         </ImageBackground>
 
@@ -160,7 +167,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     height: 40,
-    borderRadius: 6,
+    borderRadius: 20,
     marginHorizontal: 40,
     justifyContent: "center",
     alignItems: "center",
@@ -188,8 +195,17 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  // text: {
-  //   color: "pink",
-  //   fontSize: 30,
-  // },
+  navText: {
+    marginTop: 20,
+  },
+  activeText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+  },
+  staticText: {
+    color: "#00ffff",
+    textAlign: "center",
+    fontSize: 16,
+  },
 });
