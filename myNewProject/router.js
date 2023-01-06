@@ -18,16 +18,8 @@ export const useRoute = (isAuth) => {
   if (!isAuth) {
     return (
       <Stack.Navigator>
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="Register"
-          component={RegistrationScreen}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="Login"
-          component={LoginScreen}
-        />
+        <Stack.Screen options={{ headerShown: false }} name="Register" component={RegistrationScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
       </Stack.Navigator>
     );
   }
@@ -36,13 +28,7 @@ export const useRoute = (isAuth) => {
       <Tab.Screen
         options={{
           headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons
-              name="postage-stamp"
-              size={size}
-              color={color}
-            />
-          ),
+          tabBarIcon: ({ focused, color, size }) => <MaterialCommunityIcons name="postage-stamp" size={size} color={color} />,
         }}
         name="Posts"
         component={PostsScreen}
@@ -50,9 +36,7 @@ export const useRoute = (isAuth) => {
       <Tab.Screen
         options={{
           headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => (
-            <AntDesign name="pluscircle" size={35} color={color} />
-          ),
+          tabBarIcon: ({ focused, color, size }) => <AntDesign name="pluscircle" size={35} color={color} />,
         }}
         name="Create"
         component={CreatePostsScreen}
@@ -60,11 +44,9 @@ export const useRoute = (isAuth) => {
       <Tab.Screen
         options={{
           headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => (
-            <AntDesign name="user" size={size} color={color} />
-          ),
+          tabBarIcon: ({ focused, color, size }) => <AntDesign name="user" size={size} color={color} />,
         }}
-        name="Prifile"
+        name="Profile"
         component={ProfileScreen}
       />
     </Tab.Navigator>
