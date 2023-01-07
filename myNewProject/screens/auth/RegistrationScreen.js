@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { globalStyle } from "../../styles/style";
+import { globalStyles } from "../../styles";
 
 import {
   StyleSheet,
@@ -33,9 +33,7 @@ export default function RegistrationScreen({ navigation }) {
     // console.log(state);
   };
 
-  const [dimensions, setDimensions] = useState(
-    Dimensions.get("window").width - 25 * 2
-  );
+  const [dimensions, setDimensions] = useState(Dimensions.get("window").width - 25 * 2);
 
   useEffect(() => {
     const onChange = () => {
@@ -49,14 +47,9 @@ export default function RegistrationScreen({ navigation }) {
   //__________________________________________________________________________
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View style={globalStyle.container}>
-        <ImageBackground
-          style={styles.image}
-          source={require("../../assets/images/background1.jpg")}
-        >
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : ""}
-          >
+      <View style={globalStyles.container}>
+        <ImageBackground style={styles.image} source={require("../../assets/images/background1.jpg")}>
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : ""}>
             <View
               style={{
                 ...styles.form,
@@ -65,7 +58,7 @@ export default function RegistrationScreen({ navigation }) {
               }}
             >
               <View style={styles.header}>
-                <Text style={globalStyle.title}>Реєстрація</Text>
+                <Text style={globalStyles.title}>Реєстрація</Text>
               </View>
               <View>
                 {/* <Text style={styles.inputTitle}>Логин</Text> */}
@@ -73,9 +66,7 @@ export default function RegistrationScreen({ navigation }) {
                   style={styles.input}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.login}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, login: value }))
-                  }
+                  onChangeText={(value) => setState((prevState) => ({ ...prevState, login: value }))}
                   placeholder="Логін"
                 />
               </View>
@@ -85,9 +76,7 @@ export default function RegistrationScreen({ navigation }) {
                   style={styles.input}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.email}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, email: value }))
-                  }
+                  onChangeText={(value) => setState((prevState) => ({ ...prevState, email: value }))}
                   placeholder="Адреса електронної пошти"
                 />
               </View>
@@ -98,23 +87,14 @@ export default function RegistrationScreen({ navigation }) {
                   secureTextEntry={true}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.password}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, password: value }))
-                  }
+                  onChangeText={(value) => setState((prevState) => ({ ...prevState, password: value }))}
                   placeholder="Пароль"
                 />
               </View>
-              <TouchableOpacity
-                activeOpacity={0.6}
-                style={styles.button}
-                onPress={keyboardHide}
-              >
-                <Text style={styles.btnTitle}>Зареєструватися</Text>
+              <TouchableOpacity activeOpacity={0.6} style={styles.button} onPress={keyboardHide}>
+                <Text style={globalStyles.buttonTitle}>Зареєструватися</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.navText}
-                onPress={() => navigation.navigate("Login")}
-              >
+              <TouchableOpacity style={styles.navText} onPress={() => navigation.navigate("Login")}>
                 <Text style={styles.activeText}>
                   Вже є акаунт?{"  "}
                   <Text style={styles.staticText}>Увійти</Text>
@@ -190,19 +170,6 @@ const styles = StyleSheet.create({
       android: {
         backgroundColor: "#ff8c00",
         borderColor: "transparent",
-      },
-    }),
-  },
-  btnTitle: {
-    fontFamily: "Rubik-Bold",
-    fontSize: 18,
-    // fontWeight: "900",
-    ...Platform.select({
-      ios: {
-        color: "#ff8c00",
-      },
-      android: {
-        color: "#fff",
       },
     }),
   },

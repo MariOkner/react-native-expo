@@ -4,11 +4,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 
 import LoginScreen from "./screens/auth/LoginScreen";
 import RegistrationScreen from "./screens/auth/RegistrationScreen";
 import PostsScreen from "./screens/main/PostsScreen";
-import CreatePostsScreen from "./screens/main/CreatePostsScreen";
+import CreatePostScreen from "./screens/main/CreatePostScreen";
 import ProfileScreen from "./screens/main/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
@@ -24,11 +25,11 @@ export const useRoute = (isAuth) => {
     );
   }
   return (
-    <Tab.Navigator screenOptions={{ tabBarShowLabel: false }}>
+    <Tab.Navigator screenOptions={{ tabBarShowLabel: false, tabBarHideOnKeyboard: true, tabBarActiveTintColor: "#FF6C00" }}>
       <Tab.Screen
         options={{
           headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => <MaterialCommunityIcons name="postage-stamp" size={size} color={color} />,
+          tabBarIcon: ({ focused, color, size }) => <FontAwesome name="bars" size={size} color={color} />,
         }}
         name="Posts"
         component={PostsScreen}
@@ -39,7 +40,7 @@ export const useRoute = (isAuth) => {
           tabBarIcon: ({ focused, color, size }) => <AntDesign name="pluscircle" size={35} color={color} />,
         }}
         name="Create"
-        component={CreatePostsScreen}
+        component={CreatePostScreen}
       />
       <Tab.Screen
         options={{

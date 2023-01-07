@@ -7,7 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { useRoute } from "./router";
 
 import { View } from "react-native";
-import { globalStyle } from "./styles/style";
+import { globalStyles } from "./styles";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -45,7 +45,7 @@ export default function App() {
   //__________________________________________________________________________
   return (
     <NavigationContainer>
-      <View onLayout={onLayoutRootView} style={globalStyle.container}>
+      <View onLayout={onLayoutRootView} style={globalStyles.container}>
         {routing}
       </View>
     </NavigationContainer>
