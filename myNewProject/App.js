@@ -3,6 +3,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 
+import FlashMessage from "react-native-flash-message";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { useRoute } from "./router";
 
@@ -48,6 +50,7 @@ export default function App() {
       <View onLayout={onLayoutRootView} style={globalStyles.container}>
         {routing}
       </View>
+      <FlashMessage position="bottom" />
     </NavigationContainer>
   );
 }

@@ -13,9 +13,9 @@ export const globalStyles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontFamily: "Rubik-Bold",
-    marginLeft: 40,
   },
   headerBox: {
+    justifyContent: "space-between",
     // flex: 1,
     padding: 15,
     marginTop: 30,
@@ -23,11 +23,19 @@ export const globalStyles = StyleSheet.create({
     borderColor: "#a9a9a9",
     borderBottomWidth: 2,
   },
-  button: {
+  enabledButton: {
     marginTop: 15,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FF6C00",
+    backgroundColor: "#ff6c00",
+    paddingVertical: 10,
+    borderRadius: 50,
+  },
+  disabledButton: {
+    marginTop: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#a9a9a9",
     paddingVertical: 10,
     borderRadius: 50,
   },

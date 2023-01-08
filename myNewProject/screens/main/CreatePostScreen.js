@@ -5,8 +5,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 
 import { Camera, CameraType } from "expo-camera";
-import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
+
+import helpers from "../../helpers";
 
 import { globalStyles } from "../../styles";
 import { mainStyles } from "./styles";
@@ -21,42 +22,59 @@ const CreatePostScreen = ({ navigation }) => {
   const cameraRef = useRef(null);
 
   const [image, setImage] = useState(null);
+  const [imageLocation, setImageLocation] = useState(null);
   const [imageDescription, setImageDescription] = useState("");
   const [imageLocationDescription, setImageLocationDescription] = useState("");
 
-  const [location, setLocation] = useState(null);
+  const [hasForegroundPermissions, setHasForegroundPermissions] = useState(null);
 
   useEffect(() => {
     (async () => {
-      MediaLibrary.requestPermissionsAsync();
       const cameraPermissions = await Camera.requestCameraPermissionsAsync();
       setHasCameraPermission(cameraPermissions.status === "granted");
 
       const foregroundPermissions = await Location.requestForegroundPermissionsAsync();
-      if (foregroundPermissions.status === "granted") {
-        const location = await Location.getCurrentPositionAsync({});
-        setLocation({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        });
-      }
+      setHasForegroundPermissions(foregroundPermissions.status === "granted");
     })();
   }, []);
 
-  const takePhoto = async () => {
-    if (useRef) {
-      try {
-        const image = await cameraRef.current.takePictureAsync();
-        console.log(image);
-        setImage(image.uri);
-      } catch (error) {
-        console.log(error);
-      }
+  const takeImage = async (event) => {
+    if (!useRef) {
+      helpers.showWarning("Помилка камери");
+      return;
+    }
+
+    try {
+      const image = await cameraRef.current.takePictureAsync();
+      setImage(image.uri);
+    } catch (error) {
+      helpers.showWarning("Помилка камери");
+    }
+
+    const location = await Location.getLastKnownPositionAsync({});
+    if (location) {
+      setImageLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
     }
   };
 
-  const savePhoto = () => {
-    navigation.navigate("Posts", { image });
+  const saveImage = () => {
+    navigation.navigate("Posts", {
+      image: image,
+      imageLocation: imageLocation,
+      imageDescription: imageDescription,
+      imageLocationDescription: imageLocationDescription,
+    });
+    setImage(null);
+    setImageLocation(null);
+    setImageDescription("");
+    setImageLocationDescription("");
+  };
+
+  const deleteImage = (event) => {
+    setImage(null);
   };
 
   if (hasCameraPermission === false) {
@@ -67,17 +85,12 @@ const CreatePostScreen = ({ navigation }) => {
     );
   }
 
-  const goBack = (event) => {
-    console.log("goBack");
-  };
-
   return (
     <View style={mainStyles.container}>
       <View style={globalStyles.headerBox}>
-        <TouchableOpacity onPress={goBack}>
-          <AntDesign name="arrowleft" size={24} color="black" />
-        </TouchableOpacity>
+        <View></View>
         <Text style={globalStyles.headerTitle}>Створити публікацію</Text>
+        <View></View>
       </View>
 
       <View style={mainStyles.mainBox}>
@@ -85,7 +98,7 @@ const CreatePostScreen = ({ navigation }) => {
           <View style={styles.cameraBox}>
             {!image && (
               <Camera style={styles.camera} type={cameraType} flashMode={cameraFlash} ref={cameraRef}>
-                <TouchableOpacity style={styles.takePhotoButton} onPress={takePhoto}>
+                <TouchableOpacity style={styles.takeImageButton} onPress={takeImage}>
                   <MaterialCommunityIcons name="camera" size={32} color="#808080" />
                 </TouchableOpacity>
               </Camera>
@@ -95,15 +108,30 @@ const CreatePostScreen = ({ navigation }) => {
         )}
 
         <View style={styles.inputBox}>
-          <TextInput style={styles.input} onChangeText={setImageDescription} placeholder="Назва..." />
-          <TextInput style={styles.input} onChangeText={setImageLocationDescription} placeholder="Місцевість..." />
+          <TextInput style={styles.input} onChangeText={setImageDescription} placeholder="Назва..." value={imageDescription} />
+          <TextInput
+            style={styles.input}
+            onChangeText={setImageLocationDescription}
+            placeholder="Місцевість..."
+            value={imageLocationDescription}
+          />
         </View>
 
         <View style={styles.buttonBox}>
-          <TouchableOpacity style={[globalStyles.button, styles.button]} onPress={savePhoto}>
+          <TouchableOpacity
+            style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, styles.button]}
+            onPress={saveImage}
+            disabled={!image}
+            activeOpacity={1}
+          >
             <Text style={globalStyles.buttonTitle}>Опублікувати</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[globalStyles.button, styles.button]} onPress={savePhoto}>
+          <TouchableOpacity
+            style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, styles.button]}
+            onPress={deleteImage}
+            disabled={!image}
+            activeOpacity={1}
+          >
             <Text style={globalStyles.buttonTitle}>Видалити</Text>
           </TouchableOpacity>
         </View>
@@ -123,7 +151,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  takePhotoButton: {
+  takeImageButton: {
     padding: 10,
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 50,

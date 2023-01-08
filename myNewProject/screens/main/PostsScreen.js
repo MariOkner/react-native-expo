@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 // import Home from "../nested/Home";
 // import CommentsScreen from "../nested/CommentsScreen";
 // import MapScreen from "../nested/MapScreen";
-
+import { globalStyles } from "../../styles";
 import { Text, StyleSheet, View, FlatList, Image } from "react-native";
 
 const NestedScreen = createNativeStackNavigator();
@@ -28,11 +28,13 @@ const PostsScreen = ({ route }) => {
     // </NestedScreen.Navigator>
 
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Публікації</Text>
+      <View style={globalStyles.headerBox}>
+        <View></View>
+        <Text style={globalStyles.headerTitle}>Публікації</Text>
         <AntDesign name="logout" size={24} color="black" />
       </View>
-      <View style={styles.BoxGallery}>
+
+      <View style={styles.galleryBox}>
         <FlatList
           data={posts}
           keyExtractor={(item, indx) => indx.toString()}
@@ -52,23 +54,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
-  header: {
-    // backgroundColor: "blue",
-    // flex: 1,
-    padding: 15,
-    marginTop: 30,
-    flexDirection: "row",
-    borderColor: "#a9a9a9",
-    borderBottomWidth: 2,
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontFamily: "Rubik-Bold",
-    marginRight: 100,
-  },
-  BoxGallery: {
+
+  galleryBox: {
     flex: 8,
     justifyContent: "center",
     // alignItems: "center",
