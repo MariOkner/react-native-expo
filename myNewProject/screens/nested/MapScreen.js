@@ -28,7 +28,7 @@ const MapScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    // justifyContent: "center",
   },
   mapStyles: {
     width: Dimensions.get("window").width,

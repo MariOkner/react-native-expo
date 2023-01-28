@@ -61,7 +61,7 @@ const CreatePostScreen = ({ navigation }) => {
   };
 
   const saveImage = () => {
-    navigation.navigate("Posts", {
+    navigation.navigate("AAA", {
       image: image,
       imageLocation: imageLocation,
       imageDescription: imageDescription,
