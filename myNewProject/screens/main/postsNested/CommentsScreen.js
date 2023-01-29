@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { AntDesign, FontAwesome, Feather } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
-import { globalStyles } from "../../styles";
-import { Text, StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
+import { globalStyles } from "../../../styles";
+import { Text, View, FlatList, StyleSheet } from "react-native";
 
-const Home = ({ route, navigation }) => {
+const CommentsScreen = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
   console.log("route.params", route.params);
 
@@ -18,9 +18,9 @@ const Home = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <View style={globalStyles.headerBox}>
+        <AntDesign name="arrowleft" size={24} color="black" onPress={() => navigation.navigate("Home")} />
+        <Text style={globalStyles.headerTitle}>Коментарі</Text>
         <View></View>
-        <Text style={globalStyles.headerTitle}>Публікації</Text>
-        <AntDesign name="logout" size={24} color="black" />
       </View>
 
       <View style={styles.galleryBox}>
@@ -35,14 +35,16 @@ const Home = ({ route, navigation }) => {
               </View>
               <View style={styles.infoImageBox}>
                 <View style={styles.commentBox}>
-                  <TouchableOpacity style={styles.infoCommentText} onPress={() => navigation.navigate("Comments")}>
-                    <FontAwesome name="comment-o" size={24} color="black" />
-                  </TouchableOpacity>
+                  <FontAwesome name="comment-o" size={24} color="black" />
+                  <Text style={styles.infoCommentText}>0</Text>
+                </View>
+                <View style={styles.likeBox}>
+                  <AntDesign name="like2" size={24} color="black" />
+                  <Text style={styles.infoLikeText}>0</Text>
                 </View>
                 <View style={styles.mapBox}>
-                  <TouchableOpacity style={styles.infoMapText} onPress={() => navigation.navigate("Map")}>
-                    <Feather name="map-pin" size={24} color="black" />
-                  </TouchableOpacity>
+                  <Feather name="map-pin" size={24} color="black" />
+                  <Text style={styles.infoMapText}>ЛісЛісЛісЛісЛісЛіс</Text>
                 </View>
               </View>
             </View>
@@ -115,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default CommentsScreen;

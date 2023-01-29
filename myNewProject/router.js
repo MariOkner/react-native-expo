@@ -8,7 +8,7 @@ import { FontAwesome } from "@expo/vector-icons";
 
 import LoginScreen from "./screens/auth/LoginScreen";
 import RegistrationScreen from "./screens/auth/RegistrationScreen";
-import PostsScreen from "./screens/main/PostsScreen";
+import Posts from "./screens/main/Posts";
 import CreatePostScreen from "./screens/main/CreatePostScreen";
 import ProfileScreen from "./screens/main/ProfileScreen";
 
@@ -32,7 +32,7 @@ export const useRoute = (isAuth) => {
           tabBarIcon: ({ focused, color, size }) => <FontAwesome name="bars" size={size} color={color} />,
         }}
         name="Posts"
-        component={PostsScreen}
+        component={Posts}
       />
       <Tab.Screen
         options={{
