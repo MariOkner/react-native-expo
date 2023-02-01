@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { globalStyles } from "../../styles";
 
+import { useDispatch } from "react-redux";
+import { authSingUpUser } from "../../redux/auth/authOperation";
+
 import {
   StyleSheet,
   TouchableWithoutFeedback,
@@ -25,15 +28,17 @@ export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   // const [appIsReady, setAppIsReady] = useState(false);
+  const [dimensions, setDimensions] = useState(Dimensions.get("window").width - 25 * 2);
 
-  const keyboardHide = () => {
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
+    dispatch(authSingUpUser(state));
     setState(initialState);
     // console.log(state);
   };
-
-  const [dimensions, setDimensions] = useState(Dimensions.get("window").width - 25 * 2);
 
   useEffect(() => {
     const onChange = () => {
@@ -46,7 +51,7 @@ export default function RegistrationScreen({ navigation }) {
 
   //__________________________________________________________________________
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
+    <TouchableWithoutFeedback onPress={handleSubmit}>
       <View style={globalStyles.container}>
         <ImageBackground style={styles.image} source={require("../../assets/images/background1.jpg")}>
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : ""}>
@@ -91,7 +96,7 @@ export default function RegistrationScreen({ navigation }) {
                   placeholder="Пароль"
                 />
               </View>
-              <TouchableOpacity activeOpacity={0.6} style={styles.button} onPress={keyboardHide}>
+              <TouchableOpacity activeOpacity={0.6} style={styles.button} onPress={handleSubmit}>
                 <Text style={globalStyles.buttonTitle}>Зареєструватися</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.navText} onPress={() => navigation.navigate("Login")}>

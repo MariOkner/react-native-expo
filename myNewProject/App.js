@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { Provider } from "react-redux";
 
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
@@ -7,6 +8,7 @@ import FlashMessage from "react-native-flash-message";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { useRoute } from "./router";
+import { store } from "./redux/store";
 
 import { View } from "react-native";
 import { globalStyles } from "./styles";
@@ -15,7 +17,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const routing = useRoute({});
+  const routing = useRoute(false);
   // Fonts
   useEffect(() => {
     async function prepare() {
@@ -46,11 +48,13 @@ export default function App() {
 
   //__________________________________________________________________________
   return (
-    <NavigationContainer>
-      <View onLayout={onLayoutRootView} style={globalStyles.container}>
-        {routing}
-      </View>
-      <FlashMessage position="bottom" />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <View onLayout={onLayoutRootView} style={globalStyles.container}>
+          {routing}
+        </View>
+        <FlashMessage position="bottom" />
+      </NavigationContainer>
+    </Provider>
   );
 }
