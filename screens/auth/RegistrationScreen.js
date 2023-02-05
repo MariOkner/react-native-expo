@@ -133,17 +133,8 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    marginBottom: 100,
+    marginBottom: 60,
   },
-  // headerTitle: {
-  //   color: "#fff",
-  //   // backgroundColor: "#f0f8ff",
-  //   fontSize: 30,
-  //   fontFamily: "Andika-Regular",
-  //   // borderRadius: 6,
-  //   // paddingVertical: 5,
-  //   // paddingHorizontal: 15,
-  // },
   inputTitle: {
     marginBottom: 2,
     fontSize: 16,
