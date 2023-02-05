@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { globalStyles } from "../../styles";
+import React, {useEffect, useState} from "react";
+import {globalStyles} from "../../styles";
 
-import { useDispatch } from "react-redux";
-import { authSingUpUser } from "../../redux/auth/authOperation";
+import {useDispatch} from "react-redux";
+import {singUpUser} from "../../redux/auth/operation";
 
 import {
   StyleSheet,
@@ -21,10 +21,10 @@ import {
 const initialState = {
   email: "",
   password: "",
+  nickname: "",
 };
 
-export default function RegistrationScreen({ navigation }) {
-  // console.log(Platform.OS);
+export default function RegistrationScreen({navigation}) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   // const [appIsReady, setAppIsReady] = useState(false);
@@ -35,9 +35,8 @@ export default function RegistrationScreen({ navigation }) {
   const handleSubmit = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    dispatch(authSingUpUser(state));
+    dispatch(singUpUser(state));
     setState(initialState);
-    // console.log(state);
   };
 
   useEffect(() => {
@@ -60,8 +59,7 @@ export default function RegistrationScreen({ navigation }) {
                 ...styles.form,
                 marginBottom: isShowKeyboard ? 20 : 20,
                 width: dimensions,
-              }}
-            >
+              }}>
               <View style={styles.header}>
                 <Text style={globalStyles.title}>Реєстрація</Text>
               </View>
@@ -70,29 +68,29 @@ export default function RegistrationScreen({ navigation }) {
                 <TextInput
                   style={styles.input}
                   onFocus={() => setIsShowKeyboard(true)}
-                  value={state.login}
-                  onChangeText={(value) => setState((prevState) => ({ ...prevState, login: value }))}
-                  placeholder="Логін"
+                  value={state.nickname}
+                  onChangeText={value => setState(prevState => ({...prevState, nickname: value}))}
+                  placeholder="Прізвище"
                 />
               </View>
-              <View style={{ marginTop: 20 }}>
+              <View style={{marginTop: 20}}>
                 {/* <Text style={styles.inputTitle}>Email</Text> */}
                 <TextInput
                   style={styles.input}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.email}
-                  onChangeText={(value) => setState((prevState) => ({ ...prevState, email: value }))}
+                  onChangeText={value => setState(prevState => ({...prevState, email: value}))}
                   placeholder="Адреса електронної пошти"
                 />
               </View>
-              <View style={{ marginTop: 20 }}>
+              <View style={{marginTop: 20}}>
                 {/* <Text style={styles.inputTitle}>Password</Text> */}
                 <TextInput
                   style={styles.input}
                   secureTextEntry={true}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.password}
-                  onChangeText={(value) => setState((prevState) => ({ ...prevState, password: value }))}
+                  onChangeText={value => setState(prevState => ({...prevState, password: value}))}
                   placeholder="Пароль"
                 />
               </View>
