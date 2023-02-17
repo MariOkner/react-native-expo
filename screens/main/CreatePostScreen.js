@@ -1,19 +1,19 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {useState, useRef, useEffect} from "react";
 
-import { AntDesign } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useIsFocused } from "@react-navigation/native";
+import {AntDesign} from "@expo/vector-icons";
+import {MaterialCommunityIcons} from "@expo/vector-icons";
+import {useIsFocused} from "@react-navigation/native";
 
-import { Camera, CameraType } from "expo-camera";
+import {Camera, CameraType} from "expo-camera";
 import * as Location from "expo-location";
 
 import helpers from "../../helpers";
 
-import { globalStyles } from "../../styles";
-import { mainStyles } from "./styles";
-import { Text, StyleSheet, View, TouchableOpacity, Image, TextInput } from "react-native";
+import {globalStyles} from "../../styles";
+import {mainStyles} from "./styles";
+import {Text, StyleSheet, View, TouchableOpacity, Image, TextInput} from "react-native";
 
-const CreatePostScreen = ({ navigation }) => {
+const CreatePostScreen = ({navigation}) => {
   const focused = useIsFocused();
 
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -38,7 +38,7 @@ const CreatePostScreen = ({ navigation }) => {
     })();
   }, []);
 
-  const takeImage = async (event) => {
+  const takeImage = async event => {
     if (!useRef) {
       helpers.showWarning("Помилка камери");
       return;
@@ -73,7 +73,7 @@ const CreatePostScreen = ({ navigation }) => {
     setImageLocationDescription("");
   };
 
-  const deleteImage = (event) => {
+  const deleteImage = event => {
     setImage(null);
   };
 
@@ -103,11 +103,11 @@ const CreatePostScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </Camera>
             )}
-            {image && <Image source={{ uri: image }} style={styles.camera} />}
+            {image && <Image source={{uri: image}} style={styles.camera} />}
           </View>
         )}
 
-        <View style={styles.inputBox}>
+        <View style={globalStyles.inputBox}>
           <TextInput style={styles.input} onChangeText={setImageDescription} placeholder="Назва..." value={imageDescription} />
           <TextInput
             style={styles.input}
@@ -117,21 +117,19 @@ const CreatePostScreen = ({ navigation }) => {
           />
         </View>
 
-        <View style={styles.buttonBox}>
+        <View style={globalStyles.buttonBox}>
           <TouchableOpacity
-            style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, styles.button]}
+            style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, globalStyles.button]}
             onPress={saveImage}
             disabled={!image}
-            activeOpacity={1}
-          >
+            activeOpacity={1}>
             <Text style={globalStyles.buttonTitle}>Опублікувати</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, styles.button]}
+            style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, globalStyles.button]}
             onPress={deleteImage}
             disabled={!image}
-            activeOpacity={1}
-          >
+            activeOpacity={1}>
             <Text style={globalStyles.buttonTitle}>Видалити</Text>
           </TouchableOpacity>
         </View>
@@ -156,9 +154,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 50,
   },
-  inputBox: {
-    marginTop: 20,
-  },
+  // inputBox: {
+  //   marginTop: 20,
+  // },
   input: {
     textAlignVertical: "top",
     paddingVertical: 10,
@@ -166,14 +164,10 @@ const styles = StyleSheet.create({
     borderBottomColor: "#a9a9a9",
     borderBottomWidth: 1,
   },
-  buttonBox: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  button: {
-    width: 280,
-  },
+
+  // button: {
+  //   width: 280,
+  // },
   errorBox: {
     flex: 1,
     justifyContent: "center",

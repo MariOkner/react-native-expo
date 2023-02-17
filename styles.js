@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import {StyleSheet} from "react-native";
 
 export const globalStyles = StyleSheet.create({
   container: {
@@ -42,5 +42,16 @@ export const globalStyles = StyleSheet.create({
     color: "#fff",
     fontSize: 20,
     fontFamily: "Rubik-Bold",
+  },
+  buttonBox: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  button: {
+    width: 280,
+  },
+  inputBox: {
+    marginTop: 20,
   },
 });

@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { AntDesign } from "@expo/vector-icons";
+import React, {useState, useEffect} from "react";
+import {AntDesign} from "@expo/vector-icons";
 
-import { globalStyles } from "../../styles";
-import { Text, StyleSheet, View, FlatList, Image } from "react-native";
+import {globalStyles} from "../../styles";
+import {Text, StyleSheet, View, FlatList, Image} from "react-native";
 
-const ProfileScreen = ({ route }) => {
+const ProfileScreen = ({route}) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
+      setPosts(prevState => [...prevState, route.params]);
     }
   }, [route.params]);
 
@@ -19,9 +19,9 @@ const ProfileScreen = ({ route }) => {
         <FlatList
           data={posts}
           keyExtractor={(item, indx) => indx.toString()}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View style={styles.imageBox}>
-              <Image source={{ uri: item.image }} style={styles.imageStyles} />
+              <Image source={{uri: item.image}} style={styles.imageStyles} />
               <View style={styles.textDescriptionBox}>
                 <Text style={styles.infoDescriptionText}>Ліс</Text>
               </View>

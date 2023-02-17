@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { AntDesign, FontAwesome, Feather } from "@expo/vector-icons";
+import React, {useState, useEffect} from "react";
+import {AntDesign, FontAwesome, Feather} from "@expo/vector-icons";
 
-import { globalStyles } from "../../../styles";
-import { mainStyles } from "../styles";
-import { Text, StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
+import {auth} from "../../../firebase";
 
-const HomeScreen = ({ route, navigation }) => {
+import {globalStyles} from "../../../styles";
+import {mainStyles} from "../styles";
+import {Text, StyleSheet, View, FlatList, Image, TouchableOpacity} from "react-native";
+
+const HomeScreen = ({route, navigation}) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
+      setPosts(prevState => [...prevState, route.params]);
     }
   }, [route.params]);
 
@@ -19,16 +21,16 @@ const HomeScreen = ({ route, navigation }) => {
       <View style={globalStyles.headerBox}>
         <View></View>
         <Text style={globalStyles.headerTitle}>Публікації</Text>
-        <AntDesign name="logout" size={24} color="black" />
+        <AntDesign name="logout" size={24} color="black" onPress={() => auth.signOut} />
       </View>
 
       <View style={styles.galleryBox}>
         <FlatList
           data={posts}
           keyExtractor={(item, indx) => indx.toString()}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View style={mainStyles.postBox}>
-              <Image source={{ uri: item.image }} style={mainStyles.image} />
+              <Image source={{uri: item.image}} style={mainStyles.image} />
               <Text style={mainStyles.descriptionText}>{item.imageDescription}</Text>
               <View style={mainStyles.postDescriptionBox}>
                 <TouchableOpacity style={mainStyles.postDescriptionButton} onPress={() => navigation.navigate("Comments")}>
@@ -41,8 +43,7 @@ const HomeScreen = ({ route, navigation }) => {
                     navigation.navigate("Map", {
                       location: item.imageLocation,
                     })
-                  }
-                >
+                  }>
                   <Feather name="map-pin" size={24} color="black" />
                   <Text style={[mainStyles.descriptionText, mainStyles.descriptionTextPadding]}>{item.imageLocationDescription}</Text>
                 </TouchableOpacity>

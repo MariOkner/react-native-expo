@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {globalStyles} from "../../styles";
+import {authStyles} from "./styles";
 
 import {useDispatch} from "react-redux";
 import {singUpUser} from "../../redux/auth/operation";
@@ -21,13 +22,12 @@ import {
 const initialState = {
   email: "",
   password: "",
-  nickname: "",
+  nickName: "",
 };
 
 export default function RegistrationScreen({navigation}) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
-  // const [appIsReady, setAppIsReady] = useState(false);
   const [dimensions, setDimensions] = useState(Dimensions.get("window").width - 25 * 2);
 
   const dispatch = useDispatch();
@@ -44,49 +44,46 @@ export default function RegistrationScreen({navigation}) {
       const width = Dimensions.get("window").width - 25 * 2;
       setDimensions(width);
     };
-    Dimensions.addEventListener("change", onChange);
-    return () => Dimensions.remove();
+    const subscription = Dimensions.addEventListener("change", onChange);
+    return () => subscription.remove();
   }, []);
 
   //__________________________________________________________________________
   return (
     <TouchableWithoutFeedback onPress={handleSubmit}>
       <View style={globalStyles.container}>
-        <ImageBackground style={styles.image} source={require("../../assets/images/background1.jpg")}>
+        <ImageBackground style={authStyles.image} source={require("../../assets/images/pexels-photo-2088170.jpg")}>
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : ""}>
             <View
               style={{
                 ...styles.form,
-                marginBottom: isShowKeyboard ? 20 : 20,
+                marginBottom: isShowKeyboard ? 20 : 50,
                 width: dimensions,
               }}>
-              <View style={styles.header}>
+              <View style={authStyles.header}>
                 <Text style={globalStyles.title}>Реєстрація</Text>
               </View>
               <View>
-                {/* <Text style={styles.inputTitle}>Логин</Text> */}
                 <TextInput
-                  style={styles.input}
+                  style={authStyles.input}
                   onFocus={() => setIsShowKeyboard(true)}
-                  value={state.nickname}
-                  onChangeText={value => setState(prevState => ({...prevState, nickname: value}))}
+                  value={state.nickName}
+                  onChangeText={value => setState(prevState => ({...prevState, nickName: value}))}
                   placeholder="Прізвище"
                 />
               </View>
-              <View style={{marginTop: 20}}>
-                {/* <Text style={styles.inputTitle}>Email</Text> */}
+              <View style={globalStyles.inputBox}>
                 <TextInput
-                  style={styles.input}
+                  style={authStyles.input}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.email}
                   onChangeText={value => setState(prevState => ({...prevState, email: value}))}
                   placeholder="Адреса електронної пошти"
                 />
               </View>
-              <View style={{marginTop: 20}}>
-                {/* <Text style={styles.inputTitle}>Password</Text> */}
+              <View style={globalStyles.inputBox}>
                 <TextInput
-                  style={styles.input}
+                  style={authStyles.input}
                   secureTextEntry={true}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.password}
@@ -94,13 +91,15 @@ export default function RegistrationScreen({navigation}) {
                   placeholder="Пароль"
                 />
               </View>
-              <TouchableOpacity activeOpacity={0.6} style={styles.button} onPress={handleSubmit}>
-                <Text style={globalStyles.buttonTitle}>Зареєструватися</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.navText} onPress={() => navigation.navigate("Login")}>
-                <Text style={styles.activeText}>
+              <View style={globalStyles.buttonBox}>
+                <TouchableOpacity activeOpacity={0.6} style={[globalStyles.enabledButton, globalStyles.button]} onPress={handleSubmit}>
+                  <Text style={globalStyles.buttonTitle}>Зареєструватися</Text>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity style={authStyles.navText} onPress={() => navigation.navigate("Login")}>
+                <Text style={authStyles.activeText}>
                   Вже є акаунт?{"  "}
-                  <Text style={styles.staticText}>Увійти</Text>
+                  <Text style={authStyles.staticText}>Увійти</Text>
                 </Text>
               </TouchableOpacity>
             </View>
@@ -114,70 +113,7 @@ export default function RegistrationScreen({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: "#000",
-  //   // justifyContent: "center",
-  // },
-  image: {
-    flex: 1,
-    resizeMode: "cover",
-    // justifyContent: "center",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
   form: {
     // marginHorizontal: 50,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 60,
-  },
-  inputTitle: {
-    marginBottom: 2,
-    fontSize: 16,
-    fontFamily: "andika-r",
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: "",
-    height: 40,
-    borderRadius: 6,
-
-    color: "#000000",
-    backgroundColor: "#f0f8ff",
-    opacity: 0.6,
-    paddingLeft: 10,
-  },
-  button: {
-    marginTop: 20,
-    height: 40,
-    borderRadius: 20,
-    marginHorizontal: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    ...Platform.select({
-      ios: {
-        backgroundColor: "transparent",
-        borderColor: "#ff8c00",
-      },
-      android: {
-        backgroundColor: "#ff8c00",
-        borderColor: "transparent",
-      },
-    }),
-  },
-  navText: {
-    marginTop: 20,
-  },
-  activeText: {
-    color: "#fff",
-    textAlign: "center",
-    fontSize: 16,
-  },
-  staticText: {
-    color: "#00ffff",
-    textAlign: "center",
-    fontSize: 16,
   },
 });
