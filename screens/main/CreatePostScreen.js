@@ -1,46 +1,54 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, { useState, useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
-import {AntDesign} from "@expo/vector-icons";
-import {MaterialCommunityIcons} from "@expo/vector-icons";
-import {useIsFocused} from "@react-navigation/native";
+import { firestore, doc, setDoc, storage, ref, uploadBytesResumable, getDownloadURL, auth } from '../../firebase';
 
-import {Camera, CameraType} from "expo-camera";
-import * as Location from "expo-location";
+import { AntDesign } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useIsFocused } from '@react-navigation/native';
 
-import helpers from "../../helpers";
+import { Camera, CameraType } from 'expo-camera';
+import * as Location from 'expo-location';
 
-import {globalStyles} from "../../styles";
-import {mainStyles} from "./styles";
-import {Text, StyleSheet, View, TouchableOpacity, Image, TextInput} from "react-native";
+import uuid from 'react-native-uuid';
 
-const CreatePostScreen = ({navigation}) => {
-  const focused = useIsFocused();
+import helpers from '../../helpers';
+
+import { globalStyles } from '../../styles';
+import { mainStyles } from './styles';
+import { Text, StyleSheet, View, TouchableOpacity, Image, TextInput } from 'react-native';
+import { async } from '@firebase/util';
+
+const CreatePostScreen = ({ navigation }) => {
+  const [image, setImage] = useState(null);
+  const [imageLocation, setImageLocation] = useState(null);
+  const [imageDescription, setImageDescription] = useState('');
+  const [imageLocationDescription, setImageLocationDescription] = useState(null);
 
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [cameraFlash, setCameraFlash] = useState(Camera.Constants.FlashMode.auto);
   const cameraRef = useRef(null);
 
-  const [image, setImage] = useState(null);
-  const [imageLocation, setImageLocation] = useState(null);
-  const [imageDescription, setImageDescription] = useState("");
-  const [imageLocationDescription, setImageLocationDescription] = useState("");
-
   const [hasForegroundPermissions, setHasForegroundPermissions] = useState(null);
+
+  const { userId, userName } = useSelector((state) => state.auth);
+
+  const focused = useIsFocused();
 
   useEffect(() => {
     (async () => {
       const cameraPermissions = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraPermissions.status === "granted");
+      setHasCameraPermission(cameraPermissions.status === 'granted');
 
       const foregroundPermissions = await Location.requestForegroundPermissionsAsync();
-      setHasForegroundPermissions(foregroundPermissions.status === "granted");
+      setHasForegroundPermissions(foregroundPermissions.status === 'granted');
     })();
   }, []);
 
-  const takeImage = async event => {
+  const takeImage = async (event) => {
     if (!useRef) {
-      helpers.showWarning("Помилка камери");
+      helpers.showWarning('Помилка камери');
       return;
     }
 
@@ -48,7 +56,7 @@ const CreatePostScreen = ({navigation}) => {
       const image = await cameraRef.current.takePictureAsync();
       setImage(image.uri);
     } catch (error) {
-      helpers.showWarning("Помилка камери");
+      helpers.showWarning('Помилка камери');
     }
 
     const location = await Location.getLastKnownPositionAsync({});
@@ -61,7 +69,8 @@ const CreatePostScreen = ({navigation}) => {
   };
 
   const saveImage = () => {
-    navigation.navigate("Home", {
+    uploadPost();
+    navigation.navigate('Home', {
       image: image,
       imageLocation: imageLocation,
       imageDescription: imageDescription,
@@ -69,11 +78,47 @@ const CreatePostScreen = ({navigation}) => {
     });
     setImage(null);
     setImageLocation(null);
-    setImageDescription("");
-    setImageLocationDescription("");
+    setImageDescription('');
+    setImageLocationDescription('');
   };
 
-  const deleteImage = event => {
+  const uploadPost = async () => {
+    const imageURL = await uploadImage();
+    await setDoc(doc(firestore, 'posts', uuid.v4()), {
+      userId: userId,
+      userName: userName,
+      imageURL: imageURL,
+      imageLocation: imageLocation,
+      imageDescription: imageDescription,
+      imageLocationDescription: imageLocationDescription,
+    });
+  };
+
+  const uploadImage = async () => {
+    const imageRef = await fetch(image);
+    const imageData = await imageRef.blob();
+    const storageRef = ref(storage, `postImages/${uuid.v4()}`);
+    const uploadImageTask = uploadBytesResumable(storageRef, imageData);
+
+    uploadImageTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(`Image upload progress: ${progress}`);
+      },
+      (error) => {
+        console.log(`Image upload error: ${error}`);
+      },
+      () => {
+        console.log('Image has been uploaded successfully');
+      }
+    );
+    await uploadImageTask.then();
+
+    return await getDownloadURL(storageRef);
+  };
+
+  const deleteImage = (event) => {
     setImage(null);
   };
 
@@ -99,20 +144,20 @@ const CreatePostScreen = ({navigation}) => {
             {!image && (
               <Camera style={styles.camera} type={cameraType} flashMode={cameraFlash} ref={cameraRef}>
                 <TouchableOpacity style={styles.takeImageButton} onPress={takeImage}>
-                  <MaterialCommunityIcons name="camera" size={32} color="#808080" />
+                  <MaterialCommunityIcons name='camera' size={32} color='#808080' />
                 </TouchableOpacity>
               </Camera>
             )}
-            {image && <Image source={{uri: image}} style={styles.camera} />}
+            {image && <Image source={{ uri: image }} style={styles.camera} />}
           </View>
         )}
 
         <View style={globalStyles.inputBox}>
-          <TextInput style={styles.input} onChangeText={setImageDescription} placeholder="Назва..." value={imageDescription} />
+          <TextInput style={styles.input} onChangeText={setImageDescription} placeholder='Назва...' value={imageDescription} />
           <TextInput
             style={styles.input}
             onChangeText={setImageLocationDescription}
-            placeholder="Місцевість..."
+            placeholder='Місцевість...'
             value={imageLocationDescription}
           />
         </View>
@@ -122,14 +167,16 @@ const CreatePostScreen = ({navigation}) => {
             style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, globalStyles.button]}
             onPress={saveImage}
             disabled={!image}
-            activeOpacity={1}>
+            activeOpacity={1}
+          >
             <Text style={globalStyles.buttonTitle}>Опублікувати</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, globalStyles.button]}
             onPress={deleteImage}
             disabled={!image}
-            activeOpacity={1}>
+            activeOpacity={1}
+          >
             <Text style={globalStyles.buttonTitle}>Видалити</Text>
           </TouchableOpacity>
         </View>
@@ -141,27 +188,27 @@ const CreatePostScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   cameraBox: {
     borderRadius: 20,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   camera: {
-    width: "100%",
+    width: '100%',
     height: 300,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   takeImageButton: {
     padding: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 50,
   },
   // inputBox: {
   //   marginTop: 20,
   // },
   input: {
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
     paddingVertical: 10,
     fontSize: 18,
-    borderBottomColor: "#a9a9a9",
+    borderBottomColor: '#a9a9a9',
     borderBottomWidth: 1,
   },
 
@@ -170,12 +217,12 @@ const styles = StyleSheet.create({
   // },
   errorBox: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorTitle: {
     fontSize: 20,
-    fontFamily: "Rubik-Bold",
+    fontFamily: 'Rubik-Bold',
   },
 });
 

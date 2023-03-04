@@ -1,50 +1,59 @@
-import React, {useState, useEffect} from "react";
-import {AntDesign, FontAwesome, Feather} from "@expo/vector-icons";
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
-import {auth} from "../../../firebase";
+import { auth } from '../../../firebase';
+import { singOutUser } from '../../../redux/auth/operation';
 
-import {globalStyles} from "../../../styles";
-import {mainStyles} from "../styles";
-import {Text, StyleSheet, View, FlatList, Image, TouchableOpacity} from "react-native";
+import { globalStyles } from '../../../styles';
+import { mainStyles } from '../styles';
+import { AntDesign, FontAwesome, Feather } from '@expo/vector-icons';
+import { Text, StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
 
-const HomeScreen = ({route, navigation}) => {
+const HomeScreen = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     if (route.params) {
-      setPosts(prevState => [...prevState, route.params]);
+      setPosts((prevState) => [...prevState, route.params]);
     }
   }, [route.params]);
+
+  const dispatch = useDispatch();
+
+  const signOut = () => {
+    dispatch(singOutUser());
+  };
 
   return (
     <View style={mainStyles.container}>
       <View style={globalStyles.headerBox}>
         <View></View>
         <Text style={globalStyles.headerTitle}>Публікації</Text>
-        <AntDesign name="logout" size={24} color="black" onPress={() => auth.signOut} />
+        <AntDesign name='logout' size={24} color='black' onPress={signOut} />
       </View>
 
       <View style={styles.galleryBox}>
         <FlatList
           data={posts}
           keyExtractor={(item, indx) => indx.toString()}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View style={mainStyles.postBox}>
-              <Image source={{uri: item.image}} style={mainStyles.image} />
+              <Image source={{ uri: item.image }} style={mainStyles.image} />
               <Text style={mainStyles.descriptionText}>{item.imageDescription}</Text>
               <View style={mainStyles.postDescriptionBox}>
-                <TouchableOpacity style={mainStyles.postDescriptionButton} onPress={() => navigation.navigate("Comments")}>
-                  <FontAwesome name="comment-o" size={24} color="black" />
+                <TouchableOpacity style={mainStyles.postDescriptionButton} onPress={() => navigation.navigate('Comments')}>
+                  <FontAwesome name='comment-o' size={24} color='black' />
                   <Text style={[mainStyles.descriptionText, mainStyles.descriptionTextPadding]}>0</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={mainStyles.postDescriptionButton}
                   onPress={() =>
-                    navigation.navigate("Map", {
+                    navigation.navigate('Map', {
                       location: item.imageLocation,
                     })
-                  }>
-                  <Feather name="map-pin" size={24} color="black" />
+                  }
+                >
+                  <Feather name='map-pin' size={24} color='black' />
                   <Text style={[mainStyles.descriptionText, mainStyles.descriptionTextPadding]}>{item.imageLocationDescription}</Text>
                 </TouchableOpacity>
               </View>
@@ -59,8 +68,8 @@ const HomeScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   galleryBox: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     // backgroundColor: "#ffd700",
   },
 });
