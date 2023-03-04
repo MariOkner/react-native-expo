@@ -87,12 +87,12 @@ const CreatePostScreen = ({ navigation }) => {
 
     try {
       await setDoc(doc(firestore, 'posts', uuid.v4()), {
-        userId: userId,
-        userName: userName,
-        imageURL: imageURL,
-        imageLocation: imageLocation,
-        imageDescription: imageDescription,
-        imageLocationDescription: imageLocationDescription,
+        userId,
+        userName,
+        imageURL,
+        imageLocation,
+        imageDescription,
+        imageLocationDescription,
       }).catch((error) => {
         throw new Error();
       });
@@ -151,9 +151,9 @@ const CreatePostScreen = ({ navigation }) => {
         )}
 
         <View style={globalStyles.inputBox}>
-          <TextInput style={styles.input} onChangeText={setImageDescription} placeholder='Назва...' value={imageDescription} />
+          <TextInput style={mainStyles.input} onChangeText={setImageDescription} placeholder='Назва...' value={imageDescription} />
           <TextInput
-            style={styles.input}
+            style={mainStyles.input}
             onChangeText={setImageLocationDescription}
             placeholder='Місцевість...'
             value={imageLocationDescription}
@@ -199,20 +199,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 50,
   },
-  // inputBox: {
-  //   marginTop: 20,
-  // },
-  input: {
-    textAlignVertical: 'top',
-    paddingVertical: 10,
-    fontSize: 18,
-    borderBottomColor: '#a9a9a9',
-    borderBottomWidth: 1,
-  },
-
-  // button: {
-  //   width: 280,
-  // },
   errorBox: {
     flex: 1,
     justifyContent: 'center',

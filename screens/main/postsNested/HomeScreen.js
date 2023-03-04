@@ -6,6 +6,8 @@ import { singOutUser } from '../../../redux/auth/operation';
 
 import { globalStyles } from '../../../styles';
 import { mainStyles } from '../styles';
+import { posrsStyles } from './styles';
+
 import { AntDesign, FontAwesome, Feather } from '@expo/vector-icons';
 import { Text, StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
 
@@ -41,7 +43,10 @@ const HomeScreen = ({ route, navigation }) => {
               <Image source={{ uri: item.imageURL }} style={mainStyles.image} />
               <Text style={mainStyles.descriptionText}>{item.imageDescription}</Text>
               <View style={mainStyles.postDescriptionBox}>
-                <TouchableOpacity style={mainStyles.postDescriptionButton} onPress={() => navigation.navigate('Comments')}>
+                <TouchableOpacity
+                  style={mainStyles.postDescriptionButton}
+                  onPress={() => navigation.navigate('Comments', { postId: item.id })}
+                >
                   <FontAwesome name='comment-o' size={24} color='black' />
                   <Text style={[mainStyles.descriptionText, mainStyles.descriptionTextPadding]}>0</Text>
                 </TouchableOpacity>
@@ -70,7 +75,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: "#ffd700",
   },
 });
 

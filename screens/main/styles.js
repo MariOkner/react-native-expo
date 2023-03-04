@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 export const mainStyles = StyleSheet.create({
   container: {
@@ -11,7 +11,6 @@ export const mainStyles = StyleSheet.create({
     width: 350,
     marginTop: 10,
     marginBottom: 10,
-    // backgroundColor: "#808000",
   },
   image: {
     width: 350,
@@ -20,20 +19,26 @@ export const mainStyles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 18,
-    fontFamily: "andika-b",
+    fontFamily: 'andika-b',
   },
   postDescriptionBox: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    // backgroundColor: "#00ff00",
-    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   postDescriptionButton: {
-    alignItems: "center",
-    justifyContent: "flex-end",
-    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
   },
   descriptionTextPadding: {
     paddingLeft: 2,
+  },
+  input: {
+    textAlignVertical: 'top',
+    paddingVertical: 10,
+    fontSize: 18,
+    borderBottomColor: '#a9a9a9',
+    borderBottomWidth: 1,
   },
 });
