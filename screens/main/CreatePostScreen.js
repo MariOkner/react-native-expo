@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import { firestore, doc, setDoc, storage, ref, uploadBytesResumable, getDownloadURL, auth } from '../../firebase';
+import { firestore, doc, setDoc, storage, ref, uploadBytes, getDownloadURL } from '../../firebase';
 
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -48,7 +48,7 @@ const CreatePostScreen = ({ navigation }) => {
 
   const takeImage = async (event) => {
     if (!useRef) {
-      helpers.showWarning('Помилка камери');
+      helpers.showWarningMsg('Помилка камери');
       return;
     }
 
@@ -56,7 +56,7 @@ const CreatePostScreen = ({ navigation }) => {
       const image = await cameraRef.current.takePictureAsync();
       setImage(image.uri);
     } catch (error) {
-      helpers.showWarning('Помилка камери');
+      helpers.showWarningMsg('Помилка камери');
     }
 
     const location = await Location.getLastKnownPositionAsync({});
@@ -70,12 +70,9 @@ const CreatePostScreen = ({ navigation }) => {
 
   const saveImage = () => {
     uploadPost();
-    navigation.navigate('Home', {
-      image: image,
-      imageLocation: imageLocation,
-      imageDescription: imageDescription,
-      imageLocationDescription: imageLocationDescription,
-    });
+
+    navigation.navigate('Home');
+
     setImage(null);
     setImageLocation(null);
     setImageDescription('');
@@ -84,38 +81,39 @@ const CreatePostScreen = ({ navigation }) => {
 
   const uploadPost = async () => {
     const imageURL = await uploadImage();
-    await setDoc(doc(firestore, 'posts', uuid.v4()), {
-      userId: userId,
-      userName: userName,
-      imageURL: imageURL,
-      imageLocation: imageLocation,
-      imageDescription: imageDescription,
-      imageLocationDescription: imageLocationDescription,
-    });
+    if (!imageURL) {
+      return;
+    }
+
+    try {
+      await setDoc(doc(firestore, 'posts', uuid.v4()), {
+        userId: userId,
+        userName: userName,
+        imageURL: imageURL,
+        imageLocation: imageLocation,
+        imageDescription: imageDescription,
+        imageLocationDescription: imageLocationDescription,
+      }).catch((error) => {
+        throw new Error();
+      });
+    } catch (error) {
+      helpers.showWarningMsg('Помилка створення посту');
+      return;
+    }
+
+    helpers.showSuccessMsg('Пост створено');
   };
 
   const uploadImage = async () => {
     const imageRef = await fetch(image);
     const imageData = await imageRef.blob();
     const storageRef = ref(storage, `postImages/${uuid.v4()}`);
-    const uploadImageTask = uploadBytesResumable(storageRef, imageData);
+    await uploadBytes(storageRef, imageData).catch((error) => {});
 
-    uploadImageTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(`Image upload progress: ${progress}`);
-      },
-      (error) => {
-        console.log(`Image upload error: ${error}`);
-      },
-      () => {
-        console.log('Image has been uploaded successfully');
-      }
-    );
-    await uploadImageTask.then();
-
-    return await getDownloadURL(storageRef);
+    return await getDownloadURL(ref(storage, storageRef)).catch((error) => {
+      helpers.showWarningMsg('Помилка завантаження фото');
+      return null;
+    });
   };
 
   const deleteImage = (event) => {

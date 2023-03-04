@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { auth } from '../../../firebase';
+import { firestore, collection, query, onSnapshot } from '../../../firebase';
 import { singOutUser } from '../../../redux/auth/operation';
 
 import { globalStyles } from '../../../styles';
@@ -13,10 +13,10 @@ const HomeScreen = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
-    }
-  }, [route.params]);
+    onSnapshot(query(collection(firestore, 'posts')), (posts) => {
+      setPosts(posts.docs.map((post) => ({ ...post.data(), id: post.id })));
+    });
+  }, []);
 
   const dispatch = useDispatch();
 
@@ -38,7 +38,7 @@ const HomeScreen = ({ route, navigation }) => {
           keyExtractor={(item, indx) => indx.toString()}
           renderItem={({ item }) => (
             <View style={mainStyles.postBox}>
-              <Image source={{ uri: item.image }} style={mainStyles.image} />
+              <Image source={{ uri: item.imageURL }} style={mainStyles.image} />
               <Text style={mainStyles.descriptionText}>{item.imageDescription}</Text>
               <View style={mainStyles.postDescriptionBox}>
                 <TouchableOpacity style={mainStyles.postDescriptionButton} onPress={() => navigation.navigate('Comments')}>

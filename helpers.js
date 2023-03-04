@@ -1,13 +1,29 @@
-import * as FlashMessage from "react-native-flash-message";
+import * as FlashMessage from 'react-native-flash-message';
 
-const showWarning = (message) => {
+const showSuccessMsg = (message) => {
   FlashMessage.showMessage({
     message: message,
-    type: "warning",
+    type: 'success',
+  });
+};
+
+const showInfoMsg = (message) => {
+  FlashMessage.showMessage({
+    message: message,
+    type: 'info',
+  });
+};
+
+const showWarningMsg = (message) => {
+  FlashMessage.showMessage({
+    message: message,
+    type: 'warning',
   });
 };
 
 const helpers = {
-  showWarning,
+  showSuccessMsg,
+  showInfoMsg,
+  showWarningMsg,
 };
 export default helpers;
