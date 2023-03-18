@@ -1,23 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { firestore, collection, query, onSnapshot, where } from '../../firebase';
+import { firestore, collection, query, onSnapshot, where, orderBy } from '../../firebase';
 import { singOutUser } from '../../redux/auth/operation';
+
+import Post from '../../components/Post';
 
 import { globalStyles } from '../../styles';
 import { mainStyles } from './styles';
 
-import { AntDesign, FontAwesome, Feather } from '@expo/vector-icons';
-import { Text, StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
+import { Text, StyleSheet, View, FlatList } from 'react-native';
 
 const ProfileScreen = ({ route }) => {
   const [posts, setPosts] = useState([]);
+
   const { userId } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    onSnapshot(query(collection(firestore, 'posts'), where('userId', '==', userId)), (posts) => {
-      setPosts(posts.docs.map((post) => ({ ...post.data(), id: post.id })));
-    });
+    const unsubscribe = onSnapshot(
+      query(collection(firestore, 'posts'), where('userId', '==', userId), orderBy('time', 'desc')),
+      (posts) => {
+        setPosts(posts.docs.map((post) => ({ ...post.data(), id: post.id })));
+      }
+    );
+    return unsubscribe;
   }, []);
 
   const dispatch = useDispatch();
@@ -39,30 +46,13 @@ const ProfileScreen = ({ route }) => {
           data={posts}
           keyExtractor={(item, indx) => indx.toString()}
           renderItem={({ item }) => (
-            <View style={mainStyles.postBox}>
-              <Image source={{ uri: item.imageURL }} style={mainStyles.image} />
-              <Text style={mainStyles.descriptionText}>{item.imageDescription}</Text>
-              <View style={mainStyles.postDescriptionBox}>
-                <TouchableOpacity
-                  style={mainStyles.postDescriptionButton}
-                  onPress={() => navigation.navigate('Comments', { postId: item.id })}
-                >
-                  <FontAwesome name='comment-o' size={24} color='black' />
-                  <Text style={[mainStyles.descriptionText, mainStyles.descriptionTextPadding]}>0</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={mainStyles.postDescriptionButton}
-                  onPress={() =>
-                    navigation.navigate('Map', {
-                      location: item.imageLocation,
-                    })
-                  }
-                >
-                  <Feather name='map-pin' size={24} color='black' />
-                  <Text style={[mainStyles.descriptionText, mainStyles.descriptionTextPadding]}>{item.imageLocationDescription}</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            <Post
+              id={item.id}
+              imageURL={item.imageURL}
+              description={item.description}
+              location={item.location}
+              locationDescription={item.locationDescription}
+            />
           )}
         />
       </View>

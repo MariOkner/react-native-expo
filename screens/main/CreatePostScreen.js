@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 import { firestore, doc, setDoc, storage, ref, uploadBytes, getDownloadURL } from '../../firebase';
 
-import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
 
@@ -17,13 +16,12 @@ import helpers from '../../helpers';
 import { globalStyles } from '../../styles';
 import { mainStyles } from './styles';
 import { Text, StyleSheet, View, TouchableOpacity, Image, TextInput } from 'react-native';
-import { async } from '@firebase/util';
 
 const CreatePostScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
-  const [imageLocation, setImageLocation] = useState(null);
-  const [imageDescription, setImageDescription] = useState('');
-  const [imageLocationDescription, setImageLocationDescription] = useState(null);
+  const [location, setLocation] = useState(null);
+  const [description, setDescription] = useState('');
+  const [locationDescription, setLocationDescription] = useState(null);
 
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
@@ -61,7 +59,7 @@ const CreatePostScreen = ({ navigation }) => {
 
     const location = await Location.getLastKnownPositionAsync({});
     if (location) {
-      setImageLocation({
+      setLocation({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
@@ -74,9 +72,9 @@ const CreatePostScreen = ({ navigation }) => {
     navigation.navigate('Home');
 
     setImage(null);
-    setImageLocation(null);
-    setImageDescription('');
-    setImageLocationDescription('');
+    setLocation(null);
+    setDescription('');
+    setLocationDescription('');
   };
 
   const uploadPost = async () => {
@@ -85,14 +83,17 @@ const CreatePostScreen = ({ navigation }) => {
       return;
     }
 
+    const time = new Date().toUTCString();
+
     try {
       await setDoc(doc(firestore, 'posts', uuid.v4()), {
         userId,
         userName,
+        time,
         imageURL,
-        imageLocation,
-        imageDescription,
-        imageLocationDescription,
+        location,
+        description,
+        locationDescription,
       }).catch((error) => {
         throw new Error();
       });
@@ -151,12 +152,12 @@ const CreatePostScreen = ({ navigation }) => {
         )}
 
         <View style={globalStyles.inputBox}>
-          <TextInput style={mainStyles.input} onChangeText={setImageDescription} placeholder='Назва...' value={imageDescription} />
+          <TextInput style={mainStyles.input} onChangeText={setDescription} placeholder='Назва...' value={description} />
           <TextInput
             style={mainStyles.input}
-            onChangeText={setImageLocationDescription}
+            onChangeText={setLocationDescription}
             placeholder='Місцевість...'
-            value={imageLocationDescription}
+            value={locationDescription}
           />
         </View>
 

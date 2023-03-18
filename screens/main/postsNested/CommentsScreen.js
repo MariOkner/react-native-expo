@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { AntDesign } from '@expo/vector-icons';
 
@@ -12,15 +12,18 @@ import { mainStyles } from '../styles';
 import { Text, View, SafeAreaView, FlatList, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
 const CommentsScreen = ({ route, navigation }) => {
+  const dispatch = useDispatch();
   const { postId } = route.params;
   const [currentComment, setCurrentComment] = useState('');
   const [comments, setComments] = useState([]);
+
   const { userName } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    onSnapshot(query(collection(firestore, 'posts', postId, 'comments')), (comments) => {
+    const unsubscribe = onSnapshot(query(collection(firestore, 'posts', postId, 'comments')), (comments) => {
       setComments(comments.docs.map((comment) => ({ ...comment.data(), id: comment.id })));
     });
+    return unsubscribe;
   }, []);
 
   const uploadComment = async () => {
