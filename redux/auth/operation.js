@@ -3,8 +3,9 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfi
 
 import { authSlice } from '../../redux/auth/reducer';
 
-import { isAsyncThunkAction } from '@reduxjs/toolkit';
+import { createNextState, isAsyncThunkAction } from '@reduxjs/toolkit';
 import { async } from '@firebase/util';
+import helpers from '../../helpers';
 
 const { updateUserProfile, authStateChange, authSignOut } = authSlice.actions;
 
@@ -40,9 +41,19 @@ export const singInUser =
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
       console.log('user2', user);
+
+      if (!user) {
+        helpers.showWarningMsg(`Email ${email} is wrong!`);
+        return;
+      }
+
+      // if (!storedUser.verify) {
+      //   return next(new HttpError(401, `Email ${email} is not verify`));
+      // }
     } catch (error) {
-      console.log('error', error);
-      console.log('error.message', error.message);
+      next(error);
+      // console.log('error', error);
+      // console.log('error.message', error.message);
     }
   };
 

@@ -1,43 +1,66 @@
-import React, {useState, useEffect} from "react";
-import {AntDesign} from "@expo/vector-icons";
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import {globalStyles} from "../../styles";
-import {Text, StyleSheet, View, FlatList, Image} from "react-native";
+import { firestore, collection, query, onSnapshot, where } from '../../firebase';
+import { singOutUser } from '../../redux/auth/operation';
 
-const ProfileScreen = ({route}) => {
+import { globalStyles } from '../../styles';
+import { mainStyles } from './styles';
+
+import { AntDesign, FontAwesome, Feather } from '@expo/vector-icons';
+import { Text, StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
+
+const ProfileScreen = ({ route }) => {
   const [posts, setPosts] = useState([]);
+  const { userId } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (route.params) {
-      setPosts(prevState => [...prevState, route.params]);
-    }
-  }, [route.params]);
+    onSnapshot(query(collection(firestore, 'posts'), where('userId', '==', userId)), (posts) => {
+      setPosts(posts.docs.map((post) => ({ ...post.data(), id: post.id })));
+    });
+  }, []);
+
+  const dispatch = useDispatch();
+
+  const signOut = () => {
+    dispatch(singOutUser());
+  };
 
   return (
-    <View style={styles.container}>
+    <View style={mainStyles.container}>
+      <View style={globalStyles.headerBox}>
+        <View></View>
+        <Text style={globalStyles.headerTitle}>Профіль</Text>
+        <AntDesign name='logout' size={24} color='black' onPress={signOut} />
+      </View>
+
       <View style={styles.galleryBox}>
         <FlatList
           data={posts}
           keyExtractor={(item, indx) => indx.toString()}
-          renderItem={({item}) => (
-            <View style={styles.imageBox}>
-              <Image source={{uri: item.image}} style={styles.imageStyles} />
-              <View style={styles.textDescriptionBox}>
-                <Text style={styles.infoDescriptionText}>Ліс</Text>
-              </View>
-              <View style={styles.infoImageBox}>
-                <View style={styles.commentBox}>
-                  <FontAwesome name="comment-o" size={24} color="black" />
-                  <Text style={styles.infoCommentText}>0</Text>
-                </View>
-                <View style={styles.likeBox}>
-                  <AntDesign name="like2" size={24} color="black" />
-                  <Text style={styles.infoLikeText}>0</Text>
-                </View>
-                <View style={styles.mapBox}>
-                  <Feather name="map-pin" size={24} color="black" />
-                  <Text style={styles.infoMapText}>ЛісЛісЛісЛісЛісЛіс</Text>
-                </View>
+          renderItem={({ item }) => (
+            <View style={mainStyles.postBox}>
+              <Image source={{ uri: item.imageURL }} style={mainStyles.image} />
+              <Text style={mainStyles.descriptionText}>{item.imageDescription}</Text>
+              <View style={mainStyles.postDescriptionBox}>
+                <TouchableOpacity
+                  style={mainStyles.postDescriptionButton}
+                  onPress={() => navigation.navigate('Comments', { postId: item.id })}
+                >
+                  <FontAwesome name='comment-o' size={24} color='black' />
+                  <Text style={[mainStyles.descriptionText, mainStyles.descriptionTextPadding]}>0</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={mainStyles.postDescriptionButton}
+                  onPress={() =>
+                    navigation.navigate('Map', {
+                      location: item.imageLocation,
+                    })
+                  }
+                >
+                  <Feather name='map-pin' size={24} color='black' />
+                  <Text style={[mainStyles.descriptionText, mainStyles.descriptionTextPadding]}>{item.imageLocationDescription}</Text>
+                </TouchableOpacity>
               </View>
             </View>
           )}
@@ -48,64 +71,10 @@ const ProfileScreen = ({route}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-
   galleryBox: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffd700",
-  },
-  imageBox: {
-    width: 350,
-    // height: 300,
-    // borderRadius: 20,
-    marginTop: 10,
-    marginBottom: 10,
-    // justifyContent: "center",
-    // alignItems: "center",
-    backgroundColor: "#808000",
-  },
-  imageStyles: {
-    width: 350,
-    height: 300,
-    borderRadius: 20,
-  },
-  textDescriptionBox: {
-    alignItems: "flex-start",
-  },
-  infoDescriptionText: {
-    fontSize: 18,
-    fontFamily: "andika-b",
-  },
-  infoImageBox: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#00ff00",
-    flexDirection: "row",
-  },
-  commentBox: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  infoCommentText: {
-    paddingLeft: 8,
-    fontSize: 18,
-    fontFamily: "andika-b",
-  },
-  mapBox: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  infoMapText: {
-    paddingLeft: 8,
-    fontSize: 18,
-    fontFamily: "andika-b",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
