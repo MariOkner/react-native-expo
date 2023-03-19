@@ -115,7 +115,7 @@ export default function RegistrationScreen({ navigation }) {
     <TouchableWithoutFeedback onPress={handleSubmit}>
       <View style={globalStyles.container}>
         <Spinner visible={isSigningUp} color='#FFFFFF' size='large' />
-        <ImageBackground style={authStyles.image} source={require('../../assets/images/pexels-photo-2088170.jpg')}>
+        <ImageBackground style={authStyles.image} source={require('../../assets/images/auth-background.jpg')}>
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
             <View
               style={{

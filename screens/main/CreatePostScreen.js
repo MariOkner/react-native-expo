@@ -44,6 +44,13 @@ const CreatePostScreen = ({ navigation }) => {
     })();
   }, []);
 
+  const getUserImageURL = async (userId) => {
+    const storageRef = ref(storage, `userImages/${userId}`);
+    return await getDownloadURL(ref(storage, storageRef)).catch((error) => {
+      return null;
+    });
+  };
+
   const takeImage = async (event) => {
     if (!useRef) {
       helpers.showWarningMsg('Помилка камери');
@@ -78,6 +85,7 @@ const CreatePostScreen = ({ navigation }) => {
   };
 
   const uploadPost = async () => {
+    const userImageURL = await getUserImageURL(userId);
     const imageURL = await uploadImage();
     if (!imageURL) {
       return;
@@ -89,6 +97,7 @@ const CreatePostScreen = ({ navigation }) => {
       await setDoc(doc(firestore, 'posts', uuid.v4()), {
         userId,
         userName,
+        userImageURL,
         time,
         imageURL,
         location,
@@ -207,7 +216,7 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 20,
-    fontFamily: 'Rubik-Bold',
+    fontFamily: 'rubik-b',
   },
 });
 

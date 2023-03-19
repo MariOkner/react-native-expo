@@ -41,6 +41,8 @@ const HomeScreen = ({ route, navigation }) => {
           keyExtractor={(item, indx) => indx.toString()}
           renderItem={({ item }) => (
             <Post
+              userName={item.userName}
+              userImageURL={item.userImageURL}
               id={item.id}
               imageURL={item.imageURL}
               description={item.description}
@@ -56,9 +58,7 @@ const HomeScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   galleryBox: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row',
   },
 });
 

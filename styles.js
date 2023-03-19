@@ -20,7 +20,7 @@ export const globalStyles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontFamily: 'Rubik-Bold',
+    fontFamily: 'rubik-b',
   },
   enabledButton: {
     marginTop: 15,
@@ -41,7 +41,7 @@ export const globalStyles = StyleSheet.create({
   buttonTitle: {
     color: '#fff',
     fontSize: 20,
-    fontFamily: 'Rubik-Bold',
+    fontFamily: 'rubik-b',
   },
   buttonBox: {
     justifyContent: 'center',
