@@ -1,9 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+
 import { globalStyles } from '../../styles';
 import { authStyles } from './styles';
 
 import { useDispatch } from 'react-redux';
 import { singUpUser } from '../../redux/auth/operation';
+
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useIsFocused } from '@react-navigation/native';
+import { Camera } from 'expo-camera';
+
+import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
+
+import Spinner from 'react-native-loading-spinner-overlay';
+
+import helpers from '../../helpers';
 
 import {
   StyleSheet,
@@ -23,19 +34,67 @@ const initialState = {
   email: '',
   password: '',
   userName: '',
+  image: null,
 };
 
 export default function RegistrationScreen({ navigation }) {
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(false);
+  const [isSigningUp, setIsSigningUp] = useState(false);
   const [state, setState] = useState(initialState);
   const [dimensions, setDimensions] = useState(Dimensions.get('window').width - 25 * 2);
 
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [cameraType, setCameraType] = useState(Camera.Constants.Type.front);
+  const [cameraFlash, setCameraFlash] = useState(Camera.Constants.FlashMode.auto);
+  const cameraRef = useRef(null);
+
   const dispatch = useDispatch();
 
+  const focused = useIsFocused();
+
+  useEffect(() => {
+    (async () => {
+      const cameraPermissions = await Camera.requestCameraPermissionsAsync();
+      setHasCameraPermission(cameraPermissions.status === 'granted');
+    })();
+  }, []);
+
+  const takeImage = async (event) => {
+    if (!useRef) {
+      helpers.showWarningMsg('Помилка камери');
+      return;
+    }
+
+    try {
+      let image = await cameraRef.current.takePictureAsync({ skipProcessing: true });
+
+      if (cameraType === Camera.Constants.Type.front) {
+        image = await manipulateAsync(
+          image.localUri || image.uri,
+          [{ rotate: 180 }, { flip: FlipType.Vertical }, { resize: { height: 512, width: 512 } }],
+          {
+            compress: 0.5,
+            format: SaveFormat.JPEG,
+          }
+        );
+      }
+
+      setState((prevState) => ({ ...prevState, image: image.uri }));
+    } catch (error) {
+      helpers.showWarningMsg('Помилка камери');
+      console.log(error.message);
+    }
+  };
+
   const handleSubmit = () => {
-    setIsShowKeyboard(false);
+    setShowKeyboard(false);
     Keyboard.dismiss();
-    dispatch(singUpUser(state));
+    setIsSigningUp(true);
+    dispatch(
+      singUpUser(state, () => {
+        setIsSigningUp(false);
+      })
+    );
     setState(initialState);
   };
 
@@ -48,26 +107,50 @@ export default function RegistrationScreen({ navigation }) {
     return () => subscription.remove();
   }, []);
 
-  //__________________________________________________________________________
+  const deleteImage = (event) => {
+    setState((prevState) => ({ ...prevState, image: null }));
+  };
+
   return (
     <TouchableWithoutFeedback onPress={handleSubmit}>
       <View style={globalStyles.container}>
+        <Spinner visible={isSigningUp} color='#FFFFFF' size='large' />
         <ImageBackground style={authStyles.image} source={require('../../assets/images/pexels-photo-2088170.jpg')}>
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
             <View
               style={{
                 ...styles.form,
-                marginBottom: isShowKeyboard ? 20 : 50,
+                marginBottom: showKeyboard ? 20 : 50,
                 width: dimensions,
               }}
             >
+              <View style={styles.cameraBox}>
+                {focused && (
+                  <View style={styles.cameraRoundedBox}>
+                    {!state.image && (
+                      <Camera style={styles.camera} type={cameraType} flashMode={cameraFlash} ref={cameraRef}>
+                        <TouchableOpacity style={styles.takeImageButton} onPress={takeImage}>
+                          <MaterialCommunityIcons name='camera' size={32} color='#808080' />
+                        </TouchableOpacity>
+                      </Camera>
+                    )}
+                    {state.image && (
+                      <ImageBackground source={{ uri: state.image }} style={styles.camera}>
+                        <TouchableOpacity style={styles.deleteImageButton} onPress={deleteImage}>
+                          <MaterialCommunityIcons name='trash-can' size={32} color='#808080' />
+                        </TouchableOpacity>
+                      </ImageBackground>
+                    )}
+                  </View>
+                )}
+              </View>
               <View style={authStyles.header}>
                 <Text style={globalStyles.title}>Реєстрація</Text>
               </View>
               <View>
                 <TextInput
                   style={authStyles.input}
-                  onFocus={() => setIsShowKeyboard(true)}
+                  onFocus={() => setShowKeyboard(true)}
                   value={state.userName}
                   onChangeText={(value) => setState((prevState) => ({ ...prevState, userName: value }))}
                   placeholder='Прізвище'
@@ -76,7 +159,7 @@ export default function RegistrationScreen({ navigation }) {
               <View style={globalStyles.inputBox}>
                 <TextInput
                   style={authStyles.input}
-                  onFocus={() => setIsShowKeyboard(true)}
+                  onFocus={() => setShowKeyboard(true)}
                   value={state.email}
                   onChangeText={(value) => setState((prevState) => ({ ...prevState, email: value }))}
                   placeholder='Адреса електронної пошти'
@@ -86,7 +169,7 @@ export default function RegistrationScreen({ navigation }) {
                 <TextInput
                   style={authStyles.input}
                   secureTextEntry={true}
-                  onFocus={() => setIsShowKeyboard(true)}
+                  onFocus={() => setShowKeyboard(true)}
                   value={state.password}
                   onChangeText={(value) => setState((prevState) => ({ ...prevState, password: value }))}
                   placeholder='Пароль'
@@ -106,15 +189,43 @@ export default function RegistrationScreen({ navigation }) {
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
-
-        {/* <StatusBar style="auto" /> */}
       </View>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  form: {
-    // marginHorizontal: 50,
+  cameraBox: {
+    marginBottom: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cameraRoundedBox: {
+    width: 165,
+    height: 165,
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  camera: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  takeImageButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteImageButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

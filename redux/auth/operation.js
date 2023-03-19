@@ -1,19 +1,27 @@
-import { auth } from '../../firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, currentUser } from 'firebase/auth';
+import {
+  auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  storage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from '../../firebase';
 
 import { authSlice } from '../../redux/auth/reducer';
 
-import { createNextState, isAsyncThunkAction } from '@reduxjs/toolkit';
-import { async } from '@firebase/util';
 import helpers from '../../helpers';
 
 const { updateUserProfile, authStateChange, authSignOut } = authSlice.actions;
 
 export const singUpUser =
-  ({ email, password, userName }) =>
+  ({ email, password, userName, image }, done) =>
   async (dispatch, getState) => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password).catch((error) => {
+        throw new Error('Помилка реєстрації');
+      });
 
       const user = await auth.currentUser;
 
@@ -23,6 +31,17 @@ export const singUpUser =
 
       const { uid, displayName } = await auth.currentUser;
 
+      if (image) {
+        const imageRef = await fetch(image);
+        const imageData = await imageRef.blob();
+        const storageRef = ref(storage, `userImages/${uid}`);
+        await uploadBytes(storageRef, imageData).catch((error) => {});
+
+        await getDownloadURL(ref(storage, storageRef)).catch((error) => {
+          throw new Error('Помилка завантаження фото');
+        });
+      }
+
       dispatch(
         updateUserProfile({
           userId: uid,
@@ -30,36 +49,29 @@ export const singUpUser =
         })
       );
     } catch (error) {
-      console.log('error', error);
-      console.log('error.message', error.message);
+      helpers.showWarningMsg(error.message);
     }
+    done();
   };
 
 export const singInUser =
-  ({ email, password }) =>
+  ({ email, password }, done) =>
   async (dispatch, getState) => {
-    try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-      console.log('user2', user);
-
-      if (!user) {
-        helpers.showWarningMsg(`Email ${email} is wrong!`);
-        return;
-      }
-
-      // if (!storedUser.verify) {
-      //   return next(new HttpError(401, `Email ${email} is not verify`));
-      // }
-    } catch (error) {
-      next(error);
-      // console.log('error', error);
-      // console.log('error.message', error.message);
-    }
+    await signInWithEmailAndPassword(auth, email, password).catch((error) => {
+      helpers.showWarningMsg('Невірний логін або пароль');
+    });
+    done();
   };
 
 export const singOutUser = () => async (dispatch, getState) => {
-  await auth.signOut();
-  dispatch(authSignOut());
+  try {
+    await auth.signOut().catch((error) => {
+      throw new Error('Помилка виходу');
+    });
+    dispatch(authSignOut());
+  } catch (error) {
+    helpers.showWarningMsg(error.message);
+  }
 };
 
 export const authStateChangeUser = () => async (dispatch, getState) => {

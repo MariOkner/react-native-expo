@@ -6,7 +6,7 @@ import { firestore, doc, setDoc, storage, ref, uploadBytes, getDownloadURL } fro
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
 
-import { Camera, CameraType } from 'expo-camera';
+import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
 
 import uuid from 'react-native-uuid';

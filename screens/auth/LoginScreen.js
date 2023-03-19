@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {globalStyles} from "../../styles";
-import {authStyles} from "./styles";
+import React, { useEffect, useState } from 'react';
+import { globalStyles } from '../../styles';
+import { authStyles } from './styles';
 
 import {
   StyleSheet,
@@ -14,36 +14,45 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-} from "react-native";
+} from 'react-native';
 
-import {useDispatch} from "react-redux";
-import {singInUser} from "../../redux/auth/operation";
+import Spinner from 'react-native-loading-spinner-overlay';
+
+import { useDispatch } from 'react-redux';
+import { singInUser } from '../../redux/auth/operation';
 
 const initialState = {
-  email: "",
-  password: "",
+  email: '',
+  password: '',
 };
 
-export default function LoginScreen({navigation}) {
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+export default function LoginScreen({ navigation }) {
+  const [showKeyboard, setShowKeyboard] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const [state, setState] = useState(initialState);
+
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
-    setIsShowKeyboard(false);
+    setShowKeyboard(false);
     Keyboard.dismiss();
-    dispatch(singInUser(state));
+    setIsSigningIn(true);
+    dispatch(
+      singInUser(state, () => {
+        setIsSigningIn(false);
+      })
+    );
     setState(initialState);
   };
 
-  const [dimensions, setDimensions] = useState(Dimensions.get("window").width - 25 * 2);
+  const [dimensions, setDimensions] = useState(Dimensions.get('window').width - 25 * 2);
 
   useEffect(() => {
     const onChange = () => {
-      const width = Dimensions.get("window").width - 25 * 2;
+      const width = Dimensions.get('window').width - 25 * 2;
       setDimensions(width);
     };
-    const subscription = Dimensions.addEventListener("change", onChange);
+    const subscription = Dimensions.addEventListener('change', onChange);
     return () => subscription.remove();
   }, []);
 
@@ -51,34 +60,36 @@ export default function LoginScreen({navigation}) {
   return (
     <TouchableWithoutFeedback onPress={handleSubmit}>
       <View style={globalStyles.container}>
-        <ImageBackground style={authStyles.image} source={require("../../assets/images/pexels-photo-2088170.jpg")}>
-          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : ""}>
+        <Spinner visible={isSigningIn} color='#FFFFFF' size='large' />
+        <ImageBackground style={authStyles.image} source={require('../../assets/images/pexels-photo-2088170.jpg')}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
             <View
               style={{
                 ...styles.form,
-                marginBottom: isShowKeyboard ? 20 : 50,
+                marginBottom: showKeyboard ? 20 : 50,
                 width: dimensions,
-              }}>
+              }}
+            >
               <View style={authStyles.header}>
                 <Text style={globalStyles.title}>Увійти</Text>
               </View>
               <View style={globalStyles.inputBox}>
                 <TextInput
                   style={authStyles.input}
-                  onFocus={() => setIsShowKeyboard(true)}
+                  onFocus={() => setShowKeyboard(true)}
                   value={state.email}
-                  onChangeText={value => setState(prevState => ({...prevState, email: value}))}
-                  placeholder="Адреса електронної пошти"
+                  onChangeText={(value) => setState((prevState) => ({ ...prevState, email: value }))}
+                  placeholder='Адреса електронної пошти'
                 />
               </View>
               <View style={globalStyles.inputBox}>
                 <TextInput
                   style={authStyles.input}
                   secureTextEntry={true}
-                  onFocus={() => setIsShowKeyboard(true)}
+                  onFocus={() => setShowKeyboard(true)}
                   value={state.password}
-                  onChangeText={value => setState(prevState => ({...prevState, password: value}))}
-                  placeholder="Пароль"
+                  onChangeText={(value) => setState((prevState) => ({ ...prevState, password: value }))}
+                  placeholder='Пароль'
                 />
               </View>
               <View style={globalStyles.buttonBox}>
@@ -86,17 +97,15 @@ export default function LoginScreen({navigation}) {
                   <Text style={globalStyles.buttonTitle}>Увійти</Text>
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity style={authStyles.navText} onPress={() => navigation.navigate("Register")}>
+              <TouchableOpacity style={authStyles.navText} onPress={() => navigation.navigate('Register')}>
                 <Text style={authStyles.activeText}>
-                  Нема акаунта?{"  "}
+                  Нема акаунта?{'  '}
                   <Text style={authStyles.staticText}>Зареєструватися</Text>
                 </Text>
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
-
-        {/* <StatusBar style="auto" /> */}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -107,8 +116,8 @@ const styles = StyleSheet.create({
     // marginHorizontal: 50,
   },
   buttonBox: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 20,
   },
 });
