@@ -44,7 +44,7 @@ const CommentsScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={mainStyles.container}>
+    <View style={globalStyles.container}>
       <View style={globalStyles.headerBox}>
         <AntDesign name='arrowleft' size={24} color='black' onPress={() => navigation.navigate('Home')} />
         <Text style={globalStyles.headerTitle}>Коментарі</Text>

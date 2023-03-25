@@ -28,7 +28,7 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={mainStyles.container}>
+    <View style={globalStyles.container}>
       <View style={globalStyles.headerBox}>
         <View></View>
         <Text style={globalStyles.headerTitle}>Публікації</Text>
@@ -37,6 +37,7 @@ const HomeScreen = ({ route, navigation }) => {
 
       <View style={styles.galleryBox}>
         <FlatList
+          contentContainerStyle={{ flexGrow: 1 }}
           data={posts}
           keyExtractor={(item, indx) => indx.toString()}
           renderItem={({ item }) => (
@@ -60,8 +61,7 @@ const HomeScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   galleryBox: {
-    // flex: 2,
-    flexDirection: 'row',
+    flex: 1,
   },
 });
 

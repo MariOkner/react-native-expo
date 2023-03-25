@@ -139,7 +139,7 @@ const CreatePostScreen = ({ navigation }) => {
   }
 
   return (
-    <View style={mainStyles.container}>
+    <View style={globalStyles.container}>
       <View style={globalStyles.headerBox}>
         <View></View>
         <Text style={globalStyles.headerTitle}>Створити публікацію</Text>

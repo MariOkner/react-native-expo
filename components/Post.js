@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import { firestore, doc, deleteDoc } from '../firebase';
+import { firestore, collection, doc, deleteDoc, query, onSnapshot } from '../firebase';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -12,6 +12,14 @@ import { Text, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 const Post = ({ navigation, userId, userName, userImageURL, id, imageURL, description, location, locationDescription }) => {
   const { userId: currentUserId } = useSelector((state) => state.auth);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [commentsNumber, setCommentsNumber] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(query(collection(firestore, 'posts', id, 'comments')), (comments) => {
+      setCommentsNumber(comments.docs.length);
+    });
+    return unsubscribe;
+  }, []);
 
   const deletePost = async (event) => {
     setIsProcessing(true);
@@ -45,7 +53,7 @@ const Post = ({ navigation, userId, userName, userImageURL, id, imageURL, descri
         <View style={styles.descriptionBox}>
           <TouchableOpacity style={styles.descriptionButton} onPress={() => navigation.navigate('Comments', { postId: id })}>
             <FontAwesome name='comment-o' size={24} color='#ff6c00' />
-            <Text style={[styles.descriptionText, styles.descriptionTextPadding]}>0</Text>
+            <Text style={[styles.descriptionText, styles.descriptionTextPadding]}>{commentsNumber}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.descriptionButton}
@@ -109,7 +117,7 @@ const styles = StyleSheet.create({
     borderRadius: 0,
   },
   descriptionText: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'andika-r',
   },
   descriptionBox: {

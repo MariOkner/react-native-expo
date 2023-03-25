@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { firestore, collection, query, onSnapshot, where, orderBy, ref } from '../../firebase';
+import { firestore, collection, query, onSnapshot, where, storage, orderBy, ref } from '../../firebase';
 import { singOutUser } from '../../redux/auth/operation';
 
 import Post from '../../components/Post';
@@ -12,7 +12,7 @@ import { mainStyles } from './styles';
 import { AntDesign } from '@expo/vector-icons';
 import { Text, StyleSheet, View, FlatList, Image } from 'react-native';
 
-const ProfileScreen = ({ route, item }) => {
+const ProfileScreen = ({ route, navigation, item }) => {
   const [posts, setPosts] = useState([]);
 
   const { userId, userName } = useSelector((state) => state.auth);
@@ -45,7 +45,7 @@ const ProfileScreen = ({ route, item }) => {
   };
 
   return (
-    <View style={mainStyles.container}>
+    <View style={globalStyles.container}>
       <View style={globalStyles.headerBox}>
         <View></View>
         <Text style={globalStyles.headerTitle}>Профіль</Text>
@@ -62,6 +62,7 @@ const ProfileScreen = ({ route, item }) => {
           keyExtractor={(item, indx) => indx.toString()}
           renderItem={({ item }) => (
             <Post
+              navigation={navigation}
               id={item.id}
               imageURL={item.imageURL}
               description={item.description}
