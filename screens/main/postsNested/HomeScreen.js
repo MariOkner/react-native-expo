@@ -42,6 +42,7 @@ const HomeScreen = ({ route, navigation }) => {
           renderItem={({ item }) => (
             <Post
               navigation={navigation}
+              userId={item.userId}
               userName={item.userName}
               userImageURL={item.userImageURL}
               id={item.id}
@@ -59,6 +60,7 @@ const HomeScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   galleryBox: {
+    // flex: 2,
     flexDirection: 'row',
   },
 });

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { firestore, collection, query, onSnapshot, where, orderBy } from '../../firebase';
+import { firestore, collection, query, onSnapshot, where, orderBy, ref } from '../../firebase';
 import { singOutUser } from '../../redux/auth/operation';
 
 import Post from '../../components/Post';

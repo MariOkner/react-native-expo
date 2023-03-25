@@ -1,30 +1,46 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+
+import { firestore, doc, deleteDoc } from '../firebase';
+
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import { Text, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 
-const Post = ({ navigation, userName, userImageURL, id, imageURL, description, location, locationDescription }) => {
-  const [posts, setPosts] = useState([]);
+const Post = ({ navigation, userId, userName, userImageURL, id, imageURL, description, location, locationDescription }) => {
+  const { userId: currentUserId } = useSelector((state) => state.auth);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const deletePost = (event) => {
-    setPosts((prevState) => ({ ...prevState, post: [] }));
+  const deletePost = async (event) => {
+    setIsProcessing(true);
+    try {
+      await deleteDoc(doc(firestore, 'posts', id)).catch((error) => {
+        throw new Error();
+      });
+    } catch (error) {
+      helpers.showWarningMsg('Помилка видалення посту');
+    }
+    setIsProcessing(false);
   };
 
   return (
     <View style={styles.box}>
+      <Spinner visible={isProcessing} color='#FFFFFF' size='large' />
       <View style={styles.userBox}>
         <View style={styles.userInfoBox}>
           <Image source={userImageURL ? { uri: userImageURL } : require('../assets/images/no-user-image.jpg')} style={styles.userImage} />
           <Text style={styles.userName}>{userName}</Text>
         </View>
-        <TouchableOpacity style={styles.deleteImageButton} onPress={deletePost}>
-          <MaterialCommunityIcons name='trash-can' size={32} color='#808080' />
-        </TouchableOpacity>
+        {userId === currentUserId && (
+          <TouchableOpacity style={styles.deletePostButton} onPress={deletePost}>
+            <MaterialCommunityIcons name='trash-can' size={32} color='#808080' />
+          </TouchableOpacity>
+        )}
       </View>
-
+      <Image source={{ uri: imageURL }} style={styles.image} />
       <View style={styles.contentBox}>
-        <Image source={{ uri: imageURL }} style={styles.image} />
         <Text style={styles.descriptionText}>{description}</Text>
         <View style={styles.descriptionBox}>
           <TouchableOpacity style={styles.descriptionButton} onPress={() => navigation.navigate('Comments', { postId: id })}>
@@ -59,7 +75,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderRadius: 20,
     backgroundColor: '#ccc',
     padding: 5,
   },
@@ -77,7 +92,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'andika-b',
   },
-  deleteImageButton: {
+  deletePostButton: {
     width: 50,
     height: 50,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -91,7 +106,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 300,
-    borderRadius: 20,
+    borderRadius: 0,
   },
   descriptionText: {
     fontSize: 18,
