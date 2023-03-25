@@ -5,6 +5,8 @@ import { AntDesign } from '@expo/vector-icons';
 
 import { firestore, collection, doc, setDoc, query, onSnapshot } from '../../../firebase';
 
+import Comment from '../../../components/Comment';
+
 import uuid from 'react-native-uuid';
 
 import { globalStyles } from '../../../styles';
@@ -12,7 +14,7 @@ import { mainStyles } from '../styles';
 import { Text, View, SafeAreaView, FlatList, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
 const CommentsScreen = ({ route, navigation }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { postId } = route.params;
   const [currentComment, setCurrentComment] = useState('');
   const [comments, setComments] = useState([]);
@@ -30,7 +32,7 @@ const CommentsScreen = ({ route, navigation }) => {
     try {
       await setDoc(doc(firestore, 'posts', postId, 'comments', uuid.v4()), {
         userName,
-        currentComment,
+        comment: currentComment,
       }).catch((error) => {
         throw new Error();
       });
@@ -54,13 +56,8 @@ const CommentsScreen = ({ route, navigation }) => {
           <SafeAreaView style={styles.commentsScrollBox}>
             <FlatList
               data={comments}
-              renderItem={({ item }) => (
-                <View style={styles.commentBox}>
-                  <Text>{item.userName}</Text>
-                  <Text>{item.comment}</Text>
-                </View>
-              )}
               keyExtractor={(item) => item.id}
+              renderItem={({ item }) => <Comment userName={item.userName} comment={item.comment} />}
             />
           </SafeAreaView>
         )}
@@ -97,13 +94,6 @@ const styles = StyleSheet.create({
   },
   commentsScrollBox: {
     flex: 1,
-  },
-  commentBox: {
-    borderWidth: 1,
-    borderColor: '#20b2aa',
-    marginHorizontal: 10,
-    padding: 10,
-    marginBottom: 10,
   },
 });
 

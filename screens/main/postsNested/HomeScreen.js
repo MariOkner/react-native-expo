@@ -41,6 +41,7 @@ const HomeScreen = ({ route, navigation }) => {
           keyExtractor={(item, indx) => indx.toString()}
           renderItem={({ item }) => (
             <Post
+              navigation={navigation}
               userName={item.userName}
               userImageURL={item.userImageURL}
               id={item.id}

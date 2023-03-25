@@ -1,15 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import { Text, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 
-const Post = ({ userName, userImageURL, id, imageURL, description, location, locationDescription }) => {
+const Post = ({ navigation, userName, userImageURL, id, imageURL, description, location, locationDescription }) => {
+  const [posts, setPosts] = useState([]);
+
+  const deletePost = (event) => {
+    setPosts((prevState) => ({ ...prevState, post: [] }));
+  };
+
   return (
     <View style={styles.box}>
       <View style={styles.userBox}>
-        <Image source={userImageURL ? { uri: userImageURL } : require('../assets/images/no-user-image.jpg')} style={styles.userImage} />
-        <Text style={styles.userName}>{userName}</Text>
+        <View style={styles.userInfoBox}>
+          <Image source={userImageURL ? { uri: userImageURL } : require('../assets/images/no-user-image.jpg')} style={styles.userImage} />
+          <Text style={styles.userName}>{userName}</Text>
+        </View>
+        <TouchableOpacity style={styles.deleteImageButton} onPress={deletePost}>
+          <MaterialCommunityIcons name='trash-can' size={32} color='#808080' />
+        </TouchableOpacity>
       </View>
+
       <View style={styles.contentBox}>
         <Image source={{ uri: imageURL }} style={styles.image} />
         <Text style={styles.descriptionText}>{description}</Text>
@@ -45,9 +58,14 @@ const styles = StyleSheet.create({
   userBox: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     borderRadius: 20,
     backgroundColor: '#ccc',
     padding: 5,
+  },
+  userInfoBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   userImage: {
     width: 50,
@@ -58,6 +76,14 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 20,
     fontFamily: 'andika-b',
+  },
+  deleteImageButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   contentBox: {
     padding: 5,

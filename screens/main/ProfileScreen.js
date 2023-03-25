@@ -10,12 +10,12 @@ import { globalStyles } from '../../styles';
 import { mainStyles } from './styles';
 
 import { AntDesign } from '@expo/vector-icons';
-import { Text, StyleSheet, View, FlatList } from 'react-native';
+import { Text, StyleSheet, View, FlatList, Image } from 'react-native';
 
-const ProfileScreen = ({ route }) => {
+const ProfileScreen = ({ route, item }) => {
   const [posts, setPosts] = useState([]);
 
-  const { userId } = useSelector((state) => state.auth);
+  const { userId, userName } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -26,6 +26,17 @@ const ProfileScreen = ({ route }) => {
     );
     return unsubscribe;
   }, []);
+
+  const getUserImageURL = async (userId) => {
+    const storageRef = ref(storage, `userImages/${userId}`);
+    return await getDownloadURL(ref(storage, storageRef)).catch((error) => {
+      return null;
+    });
+  };
+
+  const userImageURL = getUserImageURL(userId);
+
+  console.log('userImageURL', userImageURL);
 
   const dispatch = useDispatch();
 
@@ -42,6 +53,10 @@ const ProfileScreen = ({ route }) => {
       </View>
 
       <View style={styles.galleryBox}>
+        <View style={styles.userInfoBox}>
+          <Image source={require('../../assets/images/no-user-image.jpg')} style={styles.userImage} />
+          <Text style={styles.userName}>{userName}</Text>
+        </View>
         <FlatList
           data={posts}
           keyExtractor={(item, indx) => indx.toString()}
@@ -62,9 +77,20 @@ const ProfileScreen = ({ route }) => {
 
 const styles = StyleSheet.create({
   galleryBox: {
-    flex: 1,
-    justifyContent: 'center',
+    marginTop: 10,
+  },
+  userInfoBox: {
     alignItems: 'center',
+  },
+  userImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 20,
+  },
+  userName: {
+    marginLeft: 8,
+    fontSize: 20,
+    fontFamily: 'andika-b',
   },
 });
 

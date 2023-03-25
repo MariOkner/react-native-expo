@@ -6,7 +6,7 @@ export const mainStyles = StyleSheet.create({
     width: '100%',
   },
   mainBox: {
-    padding: 15,
+    padding: 5,
   },
   input: {
     textAlignVertical: 'top',
