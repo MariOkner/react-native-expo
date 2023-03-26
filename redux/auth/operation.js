@@ -36,16 +36,13 @@ export const singUpUser =
         const imageData = await imageRef.blob();
         const storageRef = ref(storage, `userImages/${uid}`);
         await uploadBytes(storageRef, imageData).catch((error) => {});
-
-        await getDownloadURL(ref(storage, storageRef)).catch((error) => {
-          throw new Error('Помилка завантаження фото');
-        });
       }
 
       dispatch(
         updateUserProfile({
           userId: uid,
           userName: displayName,
+          userImageURL: await helpers.getUserImageURL(uid),
         })
       );
     } catch (error) {
@@ -75,11 +72,12 @@ export const singOutUser = () => async (dispatch, getState) => {
 };
 
 export const authStateChangeUser = () => async (dispatch, getState) => {
-  auth.onAuthStateChanged((user) => {
+  auth.onAuthStateChanged(async (user) => {
     if (user) {
       const userUpdateProfile = {
         userId: user.uid,
         userName: user.displayName,
+        userImageURL: await helpers.getUserImageURL(user.uid),
       };
 
       dispatch(authStateChange({ stateChange: true }));

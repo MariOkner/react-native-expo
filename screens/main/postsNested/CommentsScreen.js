@@ -3,35 +3,37 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { AntDesign } from '@expo/vector-icons';
 
-import { firestore, collection, doc, setDoc, query, onSnapshot } from '../../../firebase';
+import { firestore, collection, doc, setDoc, query, onSnapshot, orderBy } from '../../../firebase';
 
 import Comment from '../../../components/Comment';
 
 import uuid from 'react-native-uuid';
+
+import helpers from '../../../helpers';
 
 import { globalStyles } from '../../../styles';
 import { mainStyles } from '../styles';
 import { Text, View, SafeAreaView, FlatList, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
 const CommentsScreen = ({ route, navigation }) => {
-  // const dispatch = useDispatch();
   const { postId } = route.params;
+  const { userId, userName, userImageURL } = useSelector((state) => state.auth);
   const [currentComment, setCurrentComment] = useState('');
   const [comments, setComments] = useState([]);
 
-  const { userName } = useSelector((state) => state.auth);
-
   useEffect(() => {
-    const unsubscribe = onSnapshot(query(collection(firestore, 'posts', postId, 'comments')), (comments) => {
+    const unsubscribe = onSnapshot(query(collection(firestore, 'posts', postId, 'comments'), orderBy('time', 'desc')), (comments) => {
       setComments(comments.docs.map((comment) => ({ ...comment.data(), id: comment.id })));
     });
     return unsubscribe;
-  }, []);
+  }, [postId]);
 
   const uploadComment = async () => {
     try {
       await setDoc(doc(firestore, 'posts', postId, 'comments', uuid.v4()), {
         userName,
+        userImageURL,
+        time: Date.now(),
         comment: currentComment,
       }).catch((error) => {
         throw new Error();
@@ -55,9 +57,11 @@ const CommentsScreen = ({ route, navigation }) => {
         {comments && (
           <SafeAreaView style={styles.commentsScrollBox}>
             <FlatList
+              inverted={true}
+              showsVerticalScrollIndicator={false}
               data={comments}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <Comment userName={item.userName} comment={item.comment} />}
+              renderItem={({ item }) => <Comment userName={item.userName} userImageURL={item.userImageURL} comment={item.comment} />}
             />
           </SafeAreaView>
         )}

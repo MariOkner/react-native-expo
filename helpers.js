@@ -1,5 +1,7 @@
 import * as FlashMessage from 'react-native-flash-message';
 
+import { storage, ref, getDownloadURL } from './firebase';
+
 const showSuccessMsg = (message) => {
   FlashMessage.showMessage({
     message: message,
@@ -21,9 +23,17 @@ const showWarningMsg = (message) => {
   });
 };
 
+const getUserImageURL = async (userId) => {
+  const storageRef = ref(storage, `userImages/${userId}`);
+  return await getDownloadURL(ref(storage, storageRef)).catch((error) => {
+    return null;
+  });
+};
+
 const helpers = {
   showSuccessMsg,
   showInfoMsg,
   showWarningMsg,
+  getUserImageURL,
 };
 export default helpers;

@@ -19,7 +19,7 @@ const Post = ({ navigation, userId, userName, userImageURL, id, imageURL, descri
       setCommentsNumber(comments.docs.length);
     });
     return unsubscribe;
-  }, []);
+  }, [id]);
 
   const deletePost = async (event) => {
     setIsProcessing(true);

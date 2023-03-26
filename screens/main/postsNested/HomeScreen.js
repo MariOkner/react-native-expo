@@ -21,7 +21,7 @@ const HomeScreen = ({ route, navigation }) => {
       setPosts(posts.docs.map((post) => ({ ...post.data(), id: post.id })));
     });
     return unsubscribe;
-  }, []);
+  });
 
   const signOut = () => {
     dispatch(singOutUser());
@@ -37,6 +37,8 @@ const HomeScreen = ({ route, navigation }) => {
 
       <View style={styles.galleryBox}>
         <FlatList
+          inverted={true}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1 }}
           data={posts}
           keyExtractor={(item, indx) => indx.toString()}

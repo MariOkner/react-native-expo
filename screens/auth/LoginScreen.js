@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { globalStyles } from '../../styles';
 import { authStyles } from './styles';
 
 import {
   StyleSheet,
-  TouchableWithoutFeedback,
   Keyboard,
   Dimensions,
   Platform,
@@ -14,6 +13,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -30,6 +30,8 @@ export default function LoginScreen({ navigation }) {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [state, setState] = useState(initialState);
+
+  const scrollRef = useRef(null);
 
   const dispatch = useDispatch();
 
@@ -56,20 +58,18 @@ export default function LoginScreen({ navigation }) {
     return () => subscription.remove();
   }, []);
 
-  //__________________________________________________________________________
   return (
-    <TouchableWithoutFeedback onPress={handleSubmit}>
-      <View style={globalStyles.container}>
-        <Spinner visible={isSigningIn} color='#FFFFFF' size='large' />
-        <ImageBackground style={authStyles.image} source={require('../../assets/images/auth-background.jpg')}>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
-            <View
-              style={{
-                ...styles.form,
-                marginBottom: showKeyboard ? 20 : 50,
-                width: dimensions,
-              }}
-            >
+    <View style={globalStyles.container}>
+      <Spinner visible={isSigningIn} color='#FFFFFF' size='large' />
+      <ImageBackground style={authStyles.image} source={require('../../assets/images/auth-background.jpg')}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
+          <View
+            style={{
+              ...styles.form,
+              width: dimensions,
+            }}
+          >
+            <ScrollView showsVerticalScrollIndicator={false} ref={scrollRef} onContentSizeChange={() => scrollRef.current.scrollToEnd()}>
               <View style={authStyles.header}>
                 <Text style={globalStyles.title}>Увійти</Text>
               </View>
@@ -103,11 +103,11 @@ export default function LoginScreen({ navigation }) {
                   <Text style={authStyles.staticText}>Зареєструватися</Text>
                 </Text>
               </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </ImageBackground>
+    </View>
   );
 }
 

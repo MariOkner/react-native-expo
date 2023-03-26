@@ -2,12 +2,11 @@ import React from 'react';
 
 import { Text, View, Image, StyleSheet } from 'react-native';
 
-const Comment = ({ userName, comment }) => {
-  console.log('comment', comment);
+const Comment = ({ userName, userImageURL, comment }) => {
   return (
     <View style={styles.commentBox}>
       <View style={styles.userImageBox}>
-        <Image source={require('../assets/images/no-user-image.jpg')} style={styles.userImage} />
+        <Image source={userImageURL ? { uri: userImageURL } : require('../assets/images/no-user-image.jpg')} style={styles.userImage} />
       </View>
       <View style={styles.usercommentBox}>
         <Text style={styles.userName}>{userName}</Text>
@@ -24,7 +23,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   userImageBox: {
-    // flex: 2,
     marginRight: 5,
     alignItems: 'center',
   },

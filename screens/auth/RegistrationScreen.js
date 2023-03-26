@@ -18,7 +18,6 @@ import helpers from '../../helpers';
 
 import {
   StyleSheet,
-  TouchableWithoutFeedback,
   Keyboard,
   Dimensions,
   Platform,
@@ -28,6 +27,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 
 const initialState = {
@@ -47,10 +47,13 @@ export default function RegistrationScreen({ navigation }) {
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.front);
   const [cameraFlash, setCameraFlash] = useState(Camera.Constants.FlashMode.auto);
   const cameraRef = useRef(null);
+  const scrollRef = useRef(null);
 
   const dispatch = useDispatch();
 
   const focused = useIsFocused();
+
+  const scrollViewRef = useRef();
 
   useEffect(() => {
     (async () => {
@@ -112,18 +115,17 @@ export default function RegistrationScreen({ navigation }) {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={handleSubmit}>
-      <View style={globalStyles.container}>
-        <Spinner visible={isSigningUp} color='#FFFFFF' size='large' />
-        <ImageBackground style={authStyles.image} source={require('../../assets/images/auth-background.jpg')}>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
-            <View
-              style={{
-                ...styles.form,
-                marginBottom: showKeyboard ? 20 : 50,
-                width: dimensions,
-              }}
-            >
+    <View style={globalStyles.container}>
+      <Spinner visible={isSigningUp} color='#FFFFFF' size='large' />
+      <ImageBackground style={authStyles.image} source={require('../../assets/images/auth-background.jpg')}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
+          <View
+            style={{
+              ...styles.form,
+              width: dimensions,
+            }}
+          >
+            <ScrollView showsVerticalScrollIndicator={false} ref={scrollRef} onContentSizeChange={() => scrollRef.current.scrollToEnd()}>
               <View style={styles.cameraBox}>
                 {focused && (
                   <View style={styles.cameraRoundedBox}>
@@ -153,7 +155,7 @@ export default function RegistrationScreen({ navigation }) {
                   onFocus={() => setShowKeyboard(true)}
                   value={state.userName}
                   onChangeText={(value) => setState((prevState) => ({ ...prevState, userName: value }))}
-                  placeholder='Прізвище'
+                  placeholder="Ім'я"
                 />
               </View>
               <View style={globalStyles.inputBox}>
@@ -186,11 +188,11 @@ export default function RegistrationScreen({ navigation }) {
                   <Text style={authStyles.staticText}>Увійти</Text>
                 </Text>
               </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </ImageBackground>
+    </View>
   );
 }
 

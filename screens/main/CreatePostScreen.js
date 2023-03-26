@@ -15,7 +15,7 @@ import helpers from '../../helpers';
 
 import { globalStyles } from '../../styles';
 import { mainStyles } from './styles';
-import { Text, StyleSheet, View, TouchableOpacity, Image, TextInput } from 'react-native';
+import { Text, StyleSheet, View, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
 
 const CreatePostScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
@@ -30,7 +30,7 @@ const CreatePostScreen = ({ navigation }) => {
 
   const [hasForegroundPermissions, setHasForegroundPermissions] = useState(null);
 
-  const { userId, userName } = useSelector((state) => state.auth);
+  const { userId, userName, userImageURL } = useSelector((state) => state.auth);
 
   const focused = useIsFocused();
 
@@ -43,13 +43,6 @@ const CreatePostScreen = ({ navigation }) => {
       setHasForegroundPermissions(foregroundPermissions.status === 'granted');
     })();
   }, []);
-
-  const getUserImageURL = async (userId) => {
-    const storageRef = ref(storage, `userImages/${userId}`);
-    return await getDownloadURL(ref(storage, storageRef)).catch((error) => {
-      return null;
-    });
-  };
 
   const takeImage = async (event) => {
     if (!useRef) {
@@ -85,20 +78,17 @@ const CreatePostScreen = ({ navigation }) => {
   };
 
   const uploadPost = async () => {
-    const userImageURL = await getUserImageURL(userId);
     const imageURL = await uploadImage();
     if (!imageURL) {
       return;
     }
-
-    const time = new Date().toUTCString();
 
     try {
       await setDoc(doc(firestore, 'posts', uuid.v4()), {
         userId,
         userName,
         userImageURL,
-        time,
+        time: Date.now(),
         imageURL,
         location,
         description,
@@ -145,50 +135,51 @@ const CreatePostScreen = ({ navigation }) => {
         <Text style={globalStyles.headerTitle}>Створити публікацію</Text>
         <View></View>
       </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={mainStyles.mainBox}>
+          {focused && (
+            <View style={styles.cameraBox}>
+              {!image && (
+                <Camera style={styles.camera} type={cameraType} flashMode={cameraFlash} ref={cameraRef}>
+                  <TouchableOpacity style={styles.takeImageButton} onPress={takeImage}>
+                    <MaterialCommunityIcons name='camera' size={32} color='#808080' />
+                  </TouchableOpacity>
+                </Camera>
+              )}
+              {image && <Image source={{ uri: image }} style={styles.camera} />}
+            </View>
+          )}
 
-      <View style={mainStyles.mainBox}>
-        {focused && (
-          <View style={styles.cameraBox}>
-            {!image && (
-              <Camera style={styles.camera} type={cameraType} flashMode={cameraFlash} ref={cameraRef}>
-                <TouchableOpacity style={styles.takeImageButton} onPress={takeImage}>
-                  <MaterialCommunityIcons name='camera' size={32} color='#808080' />
-                </TouchableOpacity>
-              </Camera>
-            )}
-            {image && <Image source={{ uri: image }} style={styles.camera} />}
+          <View style={globalStyles.inputBox}>
+            <TextInput style={mainStyles.input} onChangeText={setDescription} placeholder='Назва...' value={description} />
+            <TextInput
+              style={mainStyles.input}
+              onChangeText={setLocationDescription}
+              placeholder='Місцевість...'
+              value={locationDescription}
+            />
           </View>
-        )}
 
-        <View style={globalStyles.inputBox}>
-          <TextInput style={mainStyles.input} onChangeText={setDescription} placeholder='Назва...' value={description} />
-          <TextInput
-            style={mainStyles.input}
-            onChangeText={setLocationDescription}
-            placeholder='Місцевість...'
-            value={locationDescription}
-          />
+          <View style={globalStyles.buttonBox}>
+            <TouchableOpacity
+              style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, globalStyles.button]}
+              onPress={saveImage}
+              disabled={!image}
+              activeOpacity={1}
+            >
+              <Text style={globalStyles.buttonTitle}>Опублікувати</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, globalStyles.button]}
+              onPress={deleteImage}
+              disabled={!image}
+              activeOpacity={1}
+            >
+              <Text style={globalStyles.buttonTitle}>Видалити</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-
-        <View style={globalStyles.buttonBox}>
-          <TouchableOpacity
-            style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, globalStyles.button]}
-            onPress={saveImage}
-            disabled={!image}
-            activeOpacity={1}
-          >
-            <Text style={globalStyles.buttonTitle}>Опублікувати</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[image ? globalStyles.enabledButton : globalStyles.disabledButton, globalStyles.button]}
-            onPress={deleteImage}
-            disabled={!image}
-            activeOpacity={1}
-          >
-            <Text style={globalStyles.buttonTitle}>Видалити</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
