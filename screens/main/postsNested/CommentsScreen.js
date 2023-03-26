@@ -6,8 +6,8 @@ import { firestore, collection, doc, setDoc, query, onSnapshot, orderBy } from '
 import { AntDesign } from '@expo/vector-icons';
 import uuid from 'react-native-uuid';
 
-import Comment from '../../../components/Comment';
 import helpers from '../../../helpers';
+import Comment from '../../../components/Comment';
 
 import { globalStyles } from '../../../styles';
 import { mainStyles } from '../styles';
@@ -20,9 +20,15 @@ const CommentsScreen = ({ route, navigation }) => {
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(query(collection(firestore, 'posts', postId, 'comments'), orderBy('time', 'desc')), (comments) => {
-      setComments(comments.docs.map((comment) => ({ ...comment.data(), id: comment.id })));
-    });
+    const unsubscribe = onSnapshot(
+      query(collection(firestore, 'posts', postId, 'comments'), orderBy('time', 'desc')),
+      (comments) => {
+        setComments(comments.docs.map((comment) => ({ ...comment.data(), id: comment.id })));
+      },
+      (error) => {
+        helpers.showWarningMsg('Помилка підписки на оновлення');
+      }
+    );
     return unsubscribe;
   }, [postId]);
 

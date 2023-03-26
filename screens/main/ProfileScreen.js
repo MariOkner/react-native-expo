@@ -6,6 +6,7 @@ import { singOutUser } from '../../redux/auth/operation';
 
 import { AntDesign } from '@expo/vector-icons';
 
+import helpers from '../../helpers';
 import Post from '../../components/Post';
 
 import { globalStyles } from '../../styles';
@@ -22,6 +23,9 @@ const ProfileScreen = ({ route, navigation, item }) => {
       query(collection(firestore, 'posts'), where('userId', '==', userId), orderBy('time', 'desc')),
       (posts) => {
         setPosts(posts.docs.map((post) => ({ ...post.data(), id: post.id })));
+      },
+      (error) => {
+        helpers.showWarningMsg('Помилка підписки на оновлення');
       }
     );
     return unsubscribe;

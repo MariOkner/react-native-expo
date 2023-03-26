@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { firestore, collection, doc, deleteDoc, query, onSnapshot, deleteObject } from '../firebase';
 
 import Spinner from 'react-native-loading-spinner-overlay';
+import helpers from '../helpers';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome, Feather } from '@expo/vector-icons';
@@ -15,9 +16,15 @@ const Post = ({ navigation, userId, userName, userImageURL, id, imageId, imageUR
   const [commentsNumber, setCommentsNumber] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(query(collection(firestore, 'posts', id, 'comments')), (comments) => {
-      setCommentsNumber(comments.docs.length);
-    });
+    const unsubscribe = onSnapshot(
+      query(collection(firestore, 'posts', id, 'comments')),
+      (comments) => {
+        setCommentsNumber(comments.docs.length);
+      },
+      (error) => {
+        helpers.showWarningMsg('Помилка підписки на оновлення');
+      }
+    );
     return unsubscribe;
   }, [id]);
 

@@ -6,6 +6,7 @@ import { singOutUser } from '../../../redux/auth/operation';
 
 import { AntDesign } from '@expo/vector-icons';
 
+import helpers from '../../../helpers';
 import Post from '../../../components/Post';
 
 import { globalStyles } from '../../../styles';
@@ -17,9 +18,15 @@ const HomeScreen = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(query(collection(firestore, 'posts'), orderBy('time', 'desc')), (posts) => {
-      setPosts(posts.docs.map((post) => ({ ...post.data(), id: post.id })));
-    });
+    const unsubscribe = onSnapshot(
+      query(collection(firestore, 'posts'), orderBy('time', 'desc')),
+      (posts) => {
+        setPosts(posts.docs.map((post) => ({ ...post.data(), id: post.id })));
+      },
+      (error) => {
+        helpers.showWarningMsg('Помилка підписки на оновлення');
+      }
+    );
     return unsubscribe;
   });
 
