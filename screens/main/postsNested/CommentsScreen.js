@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { AntDesign } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
 import { firestore, collection, doc, setDoc, query, onSnapshot, orderBy } from '../../../firebase';
 
-import Comment from '../../../components/Comment';
-
+import { AntDesign } from '@expo/vector-icons';
 import uuid from 'react-native-uuid';
 
+import Comment from '../../../components/Comment';
 import helpers from '../../../helpers';
 
 import { globalStyles } from '../../../styles';
@@ -17,7 +15,7 @@ import { Text, View, SafeAreaView, FlatList, TextInput, StyleSheet, TouchableOpa
 
 const CommentsScreen = ({ route, navigation }) => {
   const { postId } = route.params;
-  const { userId, userName, userImageURL } = useSelector((state) => state.auth);
+  const { userName, userImageURL } = useSelector((state) => state.auth);
   const [currentComment, setCurrentComment] = useState('');
   const [comments, setComments] = useState([]);
 

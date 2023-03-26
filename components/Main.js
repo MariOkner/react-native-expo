@@ -6,8 +6,6 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import FlashMessage from 'react-native-flash-message';
 
-import { auth } from '../firebase';
-import { onAuthStateChange } from 'firebase/auth';
 import { authStateChangeUser } from '../redux/auth/operation';
 
 const Main = () => {

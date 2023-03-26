@@ -4,13 +4,13 @@ import { useDispatch } from 'react-redux';
 import { firestore, collection, query, onSnapshot, orderBy } from '../../../firebase';
 import { singOutUser } from '../../../redux/auth/operation';
 
+import { AntDesign } from '@expo/vector-icons';
+
 import Post from '../../../components/Post';
 
 import { globalStyles } from '../../../styles';
 import { mainStyles } from '../styles';
-
-import { AntDesign } from '@expo/vector-icons';
-import { Text, StyleSheet, View, FlatList } from 'react-native';
+import { Text, View, FlatList } from 'react-native';
 
 const HomeScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ const HomeScreen = ({ route, navigation }) => {
         <AntDesign name='logout' size={24} color='black' onPress={signOut} />
       </View>
 
-      <View style={styles.galleryBox}>
+      <View style={mainStyles.mainBox}>
         <FlatList
           inverted={true}
           showsVerticalScrollIndicator={false}
@@ -49,6 +49,7 @@ const HomeScreen = ({ route, navigation }) => {
               userName={item.userName}
               userImageURL={item.userImageURL}
               id={item.id}
+              imageId={item.imageId}
               imageURL={item.imageURL}
               description={item.description}
               location={item.location}
@@ -60,11 +61,5 @@ const HomeScreen = ({ route, navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  galleryBox: {
-    flex: 1,
-  },
-});
 
 export default HomeScreen;

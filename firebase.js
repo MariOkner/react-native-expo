@@ -1,14 +1,8 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getFirestore, collection, doc, setDoc, deleteDoc, query, onSnapshot, where, orderBy } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { getAnalytics } from 'firebase/analytics';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-querylibraries
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: 'AIzaSyCKjtsA1MSA-VckNReRrg9PDjDQJkd1odw',
   authDomain: 'rn-social-7af25.firebaseapp.com',
@@ -43,4 +37,5 @@ export {
   ref,
   uploadBytes,
   getDownloadURL,
+  deleteObject,
 };

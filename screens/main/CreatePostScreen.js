@@ -4,14 +4,14 @@ import { useSelector } from 'react-redux';
 import { firestore, doc, setDoc, storage, ref, uploadBytes, getDownloadURL } from '../../firebase';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useIsFocused } from '@react-navigation/native';
+import uuid from 'react-native-uuid';
 
 import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
 
-import uuid from 'react-native-uuid';
-
 import helpers from '../../helpers';
+
+import { useIsFocused } from '@react-navigation/native';
 
 import { globalStyles } from '../../styles';
 import { mainStyles } from './styles';
@@ -78,7 +78,7 @@ const CreatePostScreen = ({ navigation }) => {
   };
 
   const uploadPost = async () => {
-    const imageURL = await uploadImage();
+    const { imageId, imageURL } = await uploadImage();
     if (!imageURL) {
       return;
     }
@@ -89,6 +89,7 @@ const CreatePostScreen = ({ navigation }) => {
         userName,
         userImageURL,
         time: Date.now(),
+        imageId,
         imageURL,
         location,
         description,
@@ -105,15 +106,17 @@ const CreatePostScreen = ({ navigation }) => {
   };
 
   const uploadImage = async () => {
+    const imageId = uuid.v4();
     const imageRef = await fetch(image);
     const imageData = await imageRef.blob();
-    const storageRef = ref(storage, `postImages/${uuid.v4()}`);
+    const storageRef = ref(storage, `postImages/${imageId}`);
     await uploadBytes(storageRef, imageData).catch((error) => {});
-
-    return await getDownloadURL(ref(storage, storageRef)).catch((error) => {
+    const imageURL = await getDownloadURL(ref(storage, storageRef)).catch((error) => {
       helpers.showWarningMsg('Помилка завантаження фото');
       return null;
     });
+
+    return { imageId: imageId, imageURL: imageURL };
   };
 
   const deleteImage = (event) => {

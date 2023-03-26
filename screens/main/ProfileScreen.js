@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { firestore, collection, query, onSnapshot, where, storage, orderBy, ref } from '../../firebase';
+import { firestore, collection, query, onSnapshot, where, orderBy } from '../../firebase';
 import { singOutUser } from '../../redux/auth/operation';
+
+import { AntDesign } from '@expo/vector-icons';
 
 import Post from '../../components/Post';
 
 import { globalStyles } from '../../styles';
 import { mainStyles } from './styles';
-
-import { AntDesign } from '@expo/vector-icons';
-import { Text, StyleSheet, View, FlatList } from 'react-native';
+import { Text, View, FlatList } from 'react-native';
 
 const ProfileScreen = ({ route, navigation, item }) => {
   const [posts, setPosts] = useState([]);
 
-  const { userId, userName, userImageURL } = useSelector((state) => state.auth);
+  const { userId } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -41,7 +41,7 @@ const ProfileScreen = ({ route, navigation, item }) => {
         <AntDesign name='logout' size={24} color='black' onPress={signOut} />
       </View>
 
-      <View style={styles.galleryBox}>
+      <View style={mainStyles.mainBox}>
         <FlatList
           inverted={true}
           showsVerticalScrollIndicator={false}
@@ -55,6 +55,7 @@ const ProfileScreen = ({ route, navigation, item }) => {
               userName={item.userName}
               userImageURL={item.userImageURL}
               id={item.id}
+              imageId={item.imageId}
               imageURL={item.imageURL}
               description={item.description}
               location={item.location}
@@ -66,11 +67,5 @@ const ProfileScreen = ({ route, navigation, item }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  galleryBox: {
-    flex: 1,
-  },
-});
 
 export default ProfileScreen;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import { firestore, collection, doc, deleteDoc, query, onSnapshot } from '../firebase';
+import { firestore, collection, doc, deleteDoc, query, onSnapshot, deleteObject } from '../firebase';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -9,7 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import { Text, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 
-const Post = ({ navigation, userId, userName, userImageURL, id, imageURL, description, location, locationDescription }) => {
+const Post = ({ navigation, userId, userName, userImageURL, id, imageId, imageURL, description, location, locationDescription }) => {
   const { userId: currentUserId } = useSelector((state) => state.auth);
   const [isProcessing, setIsProcessing] = useState(false);
   const [commentsNumber, setCommentsNumber] = useState(0);
@@ -24,6 +24,11 @@ const Post = ({ navigation, userId, userName, userImageURL, id, imageURL, descri
   const deletePost = async (event) => {
     setIsProcessing(true);
     try {
+      const storageRef = ref(storage, `userImages/${imageId}`);
+      await deleteObject(storageRef).catch((error) => {
+        throw new Error();
+      });
+
       await deleteDoc(doc(firestore, 'posts', id)).catch((error) => {
         throw new Error();
       });

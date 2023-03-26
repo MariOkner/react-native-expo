@@ -1,21 +1,19 @@
 import React, { useEffect, useState, useRef } from 'react';
-
-import { globalStyles } from '../../styles';
-import { authStyles } from './styles';
-
 import { useDispatch } from 'react-redux';
-import { singUpUser } from '../../redux/auth/operation';
 
+import Spinner from 'react-native-loading-spinner-overlay';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useIsFocused } from '@react-navigation/native';
 import { Camera } from 'expo-camera';
+
+import { singUpUser } from '../../redux/auth/operation';
+import helpers from '../../helpers';
 
 import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
 
-import Spinner from 'react-native-loading-spinner-overlay';
+import { useIsFocused } from '@react-navigation/native';
 
-import helpers from '../../helpers';
-
+import { globalStyles } from '../../styles';
+import { authStyles } from './styles';
 import {
   StyleSheet,
   Keyboard,
@@ -121,7 +119,6 @@ export default function RegistrationScreen({ navigation }) {
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
           <View
             style={{
-              ...styles.form,
               width: dimensions,
             }}
           >

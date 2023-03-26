@@ -8,8 +8,8 @@ import Main from './components/Main';
 
 import { store } from './redux/store';
 
-import { View } from 'react-native';
 import { globalStyles } from './styles';
+import { View } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 

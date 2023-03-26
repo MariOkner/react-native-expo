@@ -3,7 +3,6 @@ import MapView, { Marker } from 'react-native-maps';
 import { AntDesign } from '@expo/vector-icons';
 
 import { globalStyles } from '../../../styles';
-import { mainStyles } from '../styles';
 import { Text, Dimensions, View, StyleSheet } from 'react-native';
 
 const MapScreen = ({ route, navigation }) => {

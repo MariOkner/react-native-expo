@@ -1,13 +1,4 @@
-import {
-  auth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-  storage,
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from '../../firebase';
+import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, storage, ref, uploadBytes } from '../../firebase';
 
 import { authSlice } from '../../redux/auth/reducer';
 

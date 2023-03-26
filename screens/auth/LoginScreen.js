@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+
+import Spinner from 'react-native-loading-spinner-overlay';
+
+import { singInUser } from '../../redux/auth/operation';
+
 import { globalStyles } from '../../styles';
 import { authStyles } from './styles';
-
 import {
-  StyleSheet,
   Keyboard,
   Dimensions,
   Platform,
@@ -15,11 +19,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-
-import Spinner from 'react-native-loading-spinner-overlay';
-
-import { useDispatch } from 'react-redux';
-import { singInUser } from '../../redux/auth/operation';
 
 const initialState = {
   email: '',
@@ -65,7 +64,6 @@ export default function LoginScreen({ navigation }) {
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''}>
           <View
             style={{
-              ...styles.form,
               width: dimensions,
             }}
           >
@@ -110,14 +108,3 @@ export default function LoginScreen({ navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  form: {
-    // marginHorizontal: 50,
-  },
-  buttonBox: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-});
