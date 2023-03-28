@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "myNewProject",
-    "slug": "myNewProject",
+    "name": "my-life",
+    "slug": "my-life",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
@@ -14,7 +14,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -26,6 +28,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "182c5ecf-5c38-4149-b416-ae9f7a536b7a"
+      }
+    },
+    "owner": "mariokner"
   }
 }
