@@ -83,7 +83,6 @@ export default function RegistrationScreen({ navigation }) {
       setState((prevState) => ({ ...prevState, image: image.uri }));
     } catch (error) {
       helpers.showWarningMsg('Помилка камери');
-      console.log(error.message);
     }
   };
 

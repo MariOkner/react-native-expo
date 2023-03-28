@@ -28,7 +28,7 @@ const HomeScreen = ({ route, navigation }) => {
       }
     );
     return unsubscribe;
-  });
+  }, []);
 
   const signOut = () => {
     dispatch(singOutUser());

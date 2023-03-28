@@ -26,7 +26,7 @@ export default function App() {
           'rubik-b': require('./assets/fonts/Rubik-Bold.ttf'),
         });
       } catch (error) {
-        console.log(message.error);
+        helpers.showWarningMsg(error.message);
       } finally {
         setAppIsReady(true);
       }

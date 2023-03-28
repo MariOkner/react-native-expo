@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import { firestore, collection, doc, deleteDoc, query, onSnapshot, deleteObject } from '../firebase';
+import { firestore, collection, doc, deleteDoc, query, onSnapshot, storage, ref, deleteObject } from '../firebase';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 import helpers from '../helpers';
@@ -28,14 +28,13 @@ const Post = ({ navigation, userId, userName, userImageURL, id, imageId, imageUR
     return unsubscribe;
   }, [id]);
 
-  const deletePost = async (event) => {
+  const deletePost = async () => {
     setIsProcessing(true);
     try {
-      const storageRef = ref(storage, `userImages/${imageId}`);
+      const storageRef = ref(storage, `postImages/${imageId}`);
       await deleteObject(storageRef).catch((error) => {
         throw new Error();
       });
-
       await deleteDoc(doc(firestore, 'posts', id)).catch((error) => {
         throw new Error();
       });
